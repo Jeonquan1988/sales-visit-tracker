@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sales Visit Tracker V1.0</title>
+<style>
+  :root{
+    --blue:#0f5bd8; --blue2:#eaf2ff; --ink:#172033; --muted:#667085;
+    --line:#dfe5ef; --bg:#f5f7fb; --white:#fff; --green:#14804a;
+    --orange:#b54708; --red:#b42318; --shadow:0 8px 24px rgba(16,24,40,.08);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+  button,input,select,textarea{font:inherit}
+  button{cursor:pointer}
+  .app{min-height:100vh}
+  .topbar{background:var(--white);border-bottom:1px solid var(--line);padding:12px 18px;display:flex;gap:12px;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800}
+  .logo{width:36px;height:36px;border-radius:10px;background:var(--blue);display:grid;place-items:center;color:white}
+  .top-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .container{max-width:1180px;margin:0 auto;padding:18px}
+  .card{background:var(--white);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:18px;margin-bottom:16px}
+  .hero{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}
+  h1,h2,h3,p{margin-top:0}
+  h1{font-size:26px;margin-bottom:6px}
+  h2{font-size:20px}
+  h3{font-size:16px}
+  .muted{color:var(--muted)}
+  .grid{display:grid;gap:14px}
+  .grid-4{grid-template-columns:repeat(4,1fr)}
+  .grid-3{grid-template-columns:repeat(3,1fr)}
+  .grid-2{grid-template-columns:repeat(2,1fr)}
+  .metric{padding:16px;border:1px solid var(--line);border-radius:14px;background:#fff}
+  .metric b{font-size:28px;display:block;margin-top:8px}
+  .btn{border:none;border-radius:10px;padding:10px 14px;font-weight:700}
+  .btn-primary{background:var(--blue);color:white}
+  .btn-secondary{background:var(--blue2);color:var(--blue)}
+  .btn-danger{background:#fee4e2;color:var(--red)}
+  .btn-ghost{background:white;border:1px solid var(--line);color:var(--ink)}
+  .btn-small{padding:7px 10px;font-size:13px}
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+  .tab{border:1px solid var(--line);background:#fff;padding:9px 12px;border-radius:999px}
+  .tab.active{background:var(--blue);color:white;border-color:var(--blue)}
+  label{display:block;font-size:13px;font-weight:700;margin-bottom:6px}
+  input,select,textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 11px;background:#fff}
+  textarea{min-height:84px;resize:vertical}
+  .form-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  .form-row-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .form-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:12px}
+  table{width:100%;border-collapse:collapse}
+  th,td{padding:11px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+  th{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.03em}
+  .status{display:inline-flex;padding:4px 8px;border-radius:999px;font-size:12px;font-weight:800}
+  .pending{background:#fff4e5;color:var(--orange)}
+  .activevisit{background:#eaf2ff;color:var(--blue)}
+  .completed{background:#e7f6ec;color:var(--green)}
+  .cancelled{background:#fee4e2;color:var(--red)}
+  .visit-card{border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:10px}
+  .visit-head{display:flex;justify-content:space-between;gap:12px}
+  .visit-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+  .pill{display:inline-block;background:#f2f4f7;border-radius:999px;padding:4px 8px;font-size:12px;margin:2px 4px 2px 0}
+  .hidden{display:none!important}
+  .login{max-width:680px;margin:5vh auto}
+  .sales-login-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:12px 0 22px}
+  .sales-login-btn{min-height:64px;border:2px solid var(--blue);background:#fff;color:var(--blue);border-radius:14px;font-size:17px;font-weight:800;padding:12px}
+  .sales-login-btn:active{background:var(--blue2);transform:scale(.99)}
+  .manager-login-box{border-top:1px solid var(--line);padding-top:18px;margin-top:8px}
+  .mobile-open-note{background:#fff7ed;border:1px solid #fed7aa;border-radius:12px;padding:12px;margin-bottom:14px;color:#9a3412}
+  .note{border-left:4px solid var(--blue);background:var(--blue2);padding:12px;border-radius:8px}
+  .warning{border-left-color:var(--orange);background:#fff7ed}
+  .progress{height:10px;background:#eef1f6;border-radius:999px;overflow:hidden}
+  .progress > span{display:block;height:100%;background:var(--blue)}
+  .right{text-align:right}
+  .footer{padding:20px;text-align:center;color:var(--muted);font-size:12px}
+  @media(max-width:800px){
+    .grid-4,.grid-3,.grid-2,.form-row,.form-row-3{grid-template-columns:1fr}
+    .hero{flex-direction:column}
+    .topbar{align-items:flex-start}
+    .top-actions{justify-content:flex-end}
+    table{display:block;overflow-x:auto}
+    .container{padding:10px}
+    .login{margin:12px auto;padding:14px}
+    .sales-login-grid{grid-template-columns:1fr}
+    .sales-login-btn{min-height:68px;font-size:18px}
+    .topbar{position:static}
+    .brand{font-size:14px}
+    .visit-actions .btn{width:100%;min-height:48px}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand"><div class="logo">SV</div><div>Sales Visit Tracker <span class="muted">V1.0</span></div></div>
+    <div class="top-actions">
+      <button class="btn btn-ghost btn-small" onclick="toggleLanguage()" id="langBtn">中文</button>
+      <button class="btn btn-ghost btn-small hidden" onclick="exportData()" id="exportBtn">Export</button>
+      <label class="btn btn-ghost btn-small hidden" id="importLabel">Import<input type="file" accept=".json" onchange="importData(event)" style="display:none"></label>
+      <button class="btn btn-danger btn-small hidden" onclick="logout()" id="logoutBtn">Logout</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <section id="loginView" class="login card">
+      <div class="mobile-open-note">
+        <b data-en="Mobile users" data-zh="手机用户">Mobile users</b><br>
+        <span data-en="Download this file, then open it with Chrome or Safari. Do not use the WhatsApp preview." data-zh="请先下载文件，再使用 Chrome 或 Safari 打开。不要直接使用 WhatsApp 预览。">Download this file, then open it with Chrome or Safari. Do not use the WhatsApp preview.</span>
+      </div>
+      <h1 data-en="Sales Visit Tracker" data-zh="销售拜访追踪">Sales Visit Tracker</h1>
+      <p class="muted" data-en="Sales representatives: tap your name below. Managers: use the management login." data-zh="销售代表：直接点击自己的姓名。管理人员：使用下方管理入口。">Sales representatives: tap your name below. Managers: use the management login.</p>
+
+      <div id="salesQuickLogin">
+        <h3 data-en="Sales Representative Login" data-zh="销售代表登录">Sales Representative Login</h3>
+        <div id="salesLoginButtons" class="sales-login-grid"></div>
+      </div>
+
+      <div class="manager-login-box">
+        <h3 data-en="Management Login" data-zh="管理人员登录">Management Login</h3>
+        <div class="form-row-3">
+          <div><label data-en="Role" data-zh="角色">Role</label>
+            <select id="loginRole" onchange="refreshUserOptions()">
+              <option value="manager">Sales Director</option>
+              <option value="boss">Boss</option>
+            </select>
+          </div>
+          <div><label data-en="User" data-zh="用户">User</label><select id="loginUser"></select></div>
+          <div style="display:flex;align-items:end"><button class="btn btn-primary" style="width:100%" onclick="login()" data-en="Enter Dashboard" data-zh="进入管理后台">Enter Dashboard</button></div>
+        </div>
+      </div>
+      <div class="note warning" style="margin-top:16px">
+        <b data-en="Important pilot limitation" data-zh="试用版重要限制">Important pilot limitation</b>
+        <div class="muted" data-en="Data is stored in this browser only. Use Export/Import to move test data between devices. Real-time multi-user synchronization requires a cloud database in the next version." data-zh="数据只保存在当前浏览器中。可通过导出/导入在设备之间传递测试数据。真正的多用户实时同步需要下一版本接入云数据库。">Data is stored in this browser only. Use Export/Import to move test data between devices. Real-time multi-user synchronization requires a cloud database in the next version.</div>
+      </div>
+    </section>
+
+    <section id="mainView" class="hidden">
+      <div class="card hero">
+        <div>
+          <h1 id="welcomeTitle">Welcome</h1>
+          <p class="muted" id="welcomeSub"></p>
+        </div>
+        <div id="roleBadge" class="status activevisit"></div>
+      </div>
+
+      <div id="tabs" class="tabs"></div>
+      <div id="content"></div>
+    </section>
+  </main>
+  <div class="footer">Sales Visit Tracker V1.0 · Local Pilot</div>
+</div>
+
+<script>
+const KEY='svt_v1_data';
+const SESSION='svt_v1_session';
+let lang=localStorage.getItem('svt_lang')||'en';
+let state=loadState();
+let session=JSON.parse(localStorage.getItem(SESSION)||'null');
+let activeTab='';
+
+function seed(){
+  return {
+    users:[
+      {id:'s1',name:'Tendai G',role:'sales'},
+      {id:'s2',name:'Tadiwa',role:'sales'},
+      {id:'s3',name:'Tinashe',role:'sales'},
+      {id:'m1',name:'Sales Director',role:'manager'},
+      {id:'b1',name:'Boss',role:'boss'}
+    ],
+    customers:[
+      {id:'c1',name:'PnP Borrowdale',address:'Borrowdale, Harare',lat:null,lng:null},
+      {id:'c2',name:'OK Zimbabwe',address:'Harare',lat:null,lng:null},
+      {id:'c3',name:'Bon Marche',address:'Harare',lat:null,lng:null},
+      {id:'c4',name:'Food Basket',address:'Harare',lat:null,lng:null},
+      {id:'c5',name:'Essay',address:'Harare',lat:null,lng:null}
+    ],
+    plans:[], visits:[]
+  };
+}
+function loadState(){
+  try{return JSON.parse(localStorage.getItem(KEY))||seed()}catch(e){return seed()}
+}
+function save(){localStorage.setItem(KEY,JSON.stringify(state))}
+function uid(p){return p+Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+function t(en,zh){return lang==='en'?en:zh}
+function todayISO(d=new Date()){return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10)}
+function tomorrowISO(){let d=new Date();d.setDate(d.getDate()+1);return todayISO(d)}
+function fmtDate(s){if(!s)return'-';return new Date(s+'T00:00:00').toLocaleDateString(lang==='en'?'en-GB':'zh-CN',{day:'2-digit',month:'short',year:'numeric'})}
+function fmtTime(s){if(!s)return'-';return new Date(s).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}
+function duration(v){
+  if(!v.startTime||!v.endTime)return'-';
+  return Math.max(0,Math.round((new Date(v.endTime)-new Date(v.startTime))/60000))+' '+t('min','分钟');
+}
+function userName(id){return state.users.find(x=>x.id===id)?.name||'-'}
+function customerName(id){return state.customers.find(x=>x.id===id)?.name||'-'}
+function esc(s=''){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+
+function applyLanguage(){
+  document.documentElement.lang=lang;
+  document.querySelectorAll('[data-en]').forEach(el=>el.textContent=el.dataset[lang]);
+  document.getElementById('langBtn').textContent=lang==='en'?'中文':'English';
+  if(session) renderApp(); else refreshUserOptions();
+}
+function toggleLanguage(){lang=lang==='en'?'zh':'en';localStorage.setItem('svt_lang',lang);applyLanguage()}
+
+function renderSalesLoginButtons(){
+  const box=document.getElementById('salesLoginButtons');
+  if(!box)return;
+  box.innerHTML=state.users.filter(u=>u.role==='sales')
+    .map(u=>`<button class="sales-login-btn" onclick="quickSalesLogin('${u.id}')">${esc(u.name)}</button>`)
+    .join('');
+}
+function quickSalesLogin(userId){
+  session={role:'sales',userId};
+  localStorage.setItem(SESSION,JSON.stringify(session));
+  activeTab='today';
+  renderApp();
+}
+function refreshUserOptions(){
+  const role=document.getElementById('loginRole')?.value||'manager';
+  const select=document.getElementById('loginUser');
+  if(select) select.innerHTML=state.users.filter(u=>u.role===role).map(u=>`<option value="${u.id}">${esc(u.name)}</option>`).join('');
+  renderSalesLoginButtons();
+}
+function login(){
+  const role=document.getElementById('loginRole').value;
+  const userId=document.getElementById('loginUser').value;
+  session={role,userId};localStorage.setItem(SESSION,JSON.stringify(session));
+  activeTab='dashboard';
+  renderApp();
+}
+function logout(){localStorage.removeItem(SESSION);session=null;document.getElementById('mainView').classList.add('hidden');document.getElementById('loginView').classList.remove('hidden');document.getElementById('logoutBtn').classList.add('hidden');document.getElementById('exportBtn').classList.add('hidden');document.getElementById('importLabel').classList.add('hidden');refreshUserOptions();renderSalesLoginButtons()}
+
+function renderApp(){
+  if(!session)return;
+  document.getElementById('loginView').classList.add('hidden');
+  document.getElementById('mainView').classList.remove('hidden');
+  ['logoutBtn','exportBtn','importLabel'].forEach(id=>document.getElementById(id).classList.remove('hidden'));
+  const u=state.users.find(x=>x.id===session.userId);
+  document.getElementById('welcomeTitle').textContent=t('Welcome, ','欢迎，')+(u?.name||'');
+  document.getElementById('welcomeSub').textContent=new Date().toLocaleDateString(lang==='en'?'en-GB':'zh-CN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('roleBadge').textContent=session.role==='sales'?t('Sales Representative','销售代表'):session.role==='manager'?t('Sales Director','销售总监'):t('Boss','老板');
+  renderTabs();renderContent();
+}
+function renderTabs(){
+  const defs=session.role==='sales'?
+    [['today',t("Today's Visits",'今日拜访')],['plan',t("Tomorrow's Plan",'明日计划')],['history',t('My History','我的历史')]]:
+    [['dashboard',t("Today's Dashboard",'今日看板')],['plans',t("Tomorrow's Plans",'明日计划')],['records',t('Visit Records','拜访记录')],['master',t('Master Data','基础资料')]];
+  if(!activeTab)activeTab=defs[0][0];
+  document.getElementById('tabs').innerHTML=defs.map(([id,label])=>`<button class="tab ${activeTab===id?'active':''}" onclick="activeTab='${id}';renderApp()">${label}</button>`).join('');
+}
+function renderContent(){
+  const c=document.getElementById('content');
+  if(session.role==='sales'){
+    if(activeTab==='today')c.innerHTML=salesToday();
+    if(activeTab==='plan')c.innerHTML=salesPlan();
+    if(activeTab==='history')c.innerHTML=salesHistory();
+  }else{
+    if(activeTab==='dashboard')c.innerHTML=managerDashboard();
+    if(activeTab==='plans')c.innerHTML=managerPlans();
+    if(activeTab==='records')c.innerHTML=managerRecords();
+    if(activeTab==='master')c.innerHTML=masterData();
+  }
+}
+
+function salesToday(){
+  const today=todayISO();
+  const plans=state.plans.filter(p=>p.salesId===session.userId&&p.date===today);
+  const visits=state.visits.filter(v=>v.salesId===session.userId&&v.date===today);
+  const completed=visits.filter(v=>v.status==='completed').length;
+  const active=visits.find(v=>v.status==='active');
+  const plannedIds=new Set(plans.map(p=>p.customerId));
+  const cards=plans.map(p=>{
+    const v=visits.find(x=>x.planId===p.id);
+    return visitCard(p,v);
+  }).join('');
+  const unplanned=visits.filter(v=>!v.planId).map(v=>visitCard(null,v)).join('');
+  return `
+  <div class="grid grid-3">
+    <div class="metric">${t('Planned','计划')}<b>${plans.length}</b></div>
+    <div class="metric">${t('Completed','已完成')}<b>${completed}</b></div>
+    <div class="metric">${t('Remaining','剩余')}<b>${Math.max(0,plans.length-completed)}</b></div>
+  </div>
+  ${active?`<div class="note" style="margin:16px 0"><b>${t('Active visit: ','正在拜访：')}${customerName(active.customerId)}</b> · ${fmtTime(active.startTime)}</div>`:''}
+  <div class="card"><div class="hero"><div><h2>${t("Today's Visits","今日拜访")}</h2><p class="muted">${fmtDate(today)}</p></div>
+  <button class="btn btn-secondary" onclick="showUnplannedForm()">${t('+ Add Unplanned Visit','+ 添加临时拜访')}</button></div>
+  <div id="unplannedForm" class="hidden">${unplannedForm()}</div>
+  ${cards||`<div class="note warning">${t('No plan was submitted for today. You can add an unplanned visit.','今天没有已提交计划，可以添加临时拜访。')}</div>`}
+  ${unplanned?`<h3 style="margin-top:18px">${t('Unplanned Visits','临时拜访')}</h3>${unplanned}`:''}
+  </div>`;
+}
+function visitCard(plan,v){
+  const customerId=plan?plan.customerId:v.customerId;
+  const status=v?.status||'pending';
+  const purpose=(plan?.purpose||v?.purpose||[]).map(x=>`<span class="pill">${esc(x)}</span>`).join('');
+  let actions='';
+  if(!v) actions=`<button class="btn btn-primary" onclick="startVisit('${plan.id}','${customerId}')">${t('Start Visit','开始拜访')}</button>`;
+  else if(v.status==='active') actions=`<button class="btn btn-primary" onclick="showFinish('${v.id}')">${t('Finish Visit','结束拜访')}</button>`;
+  else actions=`<span class="muted">${t('Completed','已完成')} · ${duration(v)}</span>`;
+  return `<div class="visit-card">
+    <div class="visit-head"><div><h3>${esc(customerName(customerId))}</h3><div class="muted">${esc(state.customers.find(c=>c.id===customerId)?.address||'')}</div></div>
+    <span class="status ${status==='active'?'activevisit':status}">${status==='pending'?t('Pending','待拜访'):status==='active'?t('In Progress','进行中'):t('Completed','已完成')}</span></div>
+    <div style="margin-top:8px">${purpose}</div>
+    ${v?`<div class="muted" style="margin-top:8px">${t('Start','开始')}: ${fmtTime(v.startTime)} · ${t('End','结束')}: ${fmtTime(v.endTime)} · GPS: ${v.startLat??'-'}, ${v.startLng??'-'}</div>`:''}
+    <div class="visit-actions">${actions}</div>
+    ${v?.status==='active'?`<div id="finish_${v.id}" class="hidden" style="margin-top:14px">${finishForm(v.id)}</div>`:''}
+  </div>`;
+}
+function showUnplannedForm(){document.getElementById('unplannedForm').classList.toggle('hidden')}
+function unplannedForm(){
+  const opts=state.customers.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('');
+  return `<div class="card" style="box-shadow:none;margin-top:14px"><div class="form-row-3">
+    <div><label>${t('Customer','客户')}</label><select id="upCustomer">${opts}</select></div>
+    <div><label>${t('Purpose','拜访目的')}</label><select id="upPurpose"><option>Collection</option><option>Order</option><option>Product Introduction</option><option>Stock Check</option><option>Complaint</option><option>Price Discussion</option><option>Relationship Visit</option></select></div>
+    <div><label>${t('Reason for unplanned visit','临时拜访原因')}</label><input id="upReason"></div>
+  </div><div class="form-actions"><button class="btn btn-primary" onclick="startUnplanned()">${t('Start Now','立即开始')}</button></div></div>`
+}
+function startUnplanned(){
+  const customerId=document.getElementById('upCustomer').value;
+  const purpose=[document.getElementById('upPurpose').value];
+  const reason=document.getElementById('upReason').value.trim();
+  if(!reason){alert(t('Please enter a reason.','请输入临时拜访原因。'));return}
+  getLocation(loc=>{
+    state.visits.push({id:uid('v'),salesId:session.userId,customerId,date:todayISO(),planId:null,purpose,unplannedReason:reason,status:'active',startTime:new Date().toISOString(),startLat:loc.lat,startLng:loc.lng,startAccuracy:loc.accuracy});
+    save();renderApp();
+  });
+}
+function startVisit(planId,customerId){
+  const active=state.visits.find(v=>v.salesId===session.userId&&v.status==='active');
+  if(active){alert(t('Finish the current visit first.','请先结束当前拜访。'));return}
+  getLocation(loc=>{
+    const plan=state.plans.find(p=>p.id===planId);
+    state.visits.push({id:uid('v'),salesId:session.userId,customerId,date:todayISO(),planId,purpose:plan?.purpose||[],status:'active',startTime:new Date().toISOString(),startLat:loc.lat,startLng:loc.lng,startAccuracy:loc.accuracy});
+    save();renderApp();
+  });
+}
+function getLocation(cb){
+  if(!navigator.geolocation){cb({lat:null,lng:null,accuracy:null});return}
+  navigator.geolocation.getCurrentPosition(
+    p=>cb({lat:+p.coords.latitude.toFixed(6),lng:+p.coords.longitude.toFixed(6),accuracy:Math.round(p.coords.accuracy)}),
+    ()=>{alert(t('Location could not be obtained. The visit will be recorded without GPS.','无法获取定位，本次拜访将不带GPS记录。'));cb({lat:null,lng:null,accuracy:null})},
+    {enableHighAccuracy:true,timeout:10000,maximumAge:0}
+  )
+}
+function showFinish(id){document.getElementById('finish_'+id).classList.toggle('hidden')}
+function finishForm(id){
+  return `<div class="form-row">
+    <div><label>${t('Result','拜访结果')}</label><select id="res_${id}" multiple size="4"><option>Order</option><option>Collection</option><option>Product Demo</option><option>Complaint</option><option>Stock Check</option><option>Relationship</option></select></div>
+    <div><label>${t('Order Amount (USD)','订单金额（USD）')}</label><input type="number" min="0" step="0.01" id="order_${id}" value="0"></div>
+    <div><label>${t('Collection Amount (USD)','回款金额（USD）')}</label><input type="number" min="0" step="0.01" id="collection_${id}" value="0"></div>
+    <div><label>${t('Follow-up Required','需要跟进')}</label><select id="follow_${id}"><option value="no">${t('No','否')}</option><option value="yes">${t('Yes','是')}</option></select></div>
+  </div>
+  <div style="margin-top:10px"><label>${t('Remark','备注')}</label><textarea id="remark_${id}" placeholder="${t('Customer needs, price, supply, payment or next action...','客户需求、价格、供应、回款或下一步行动……')}"></textarea></div>
+  <div class="form-actions"><button class="btn btn-primary" onclick="finishVisit('${id}')">${t('Complete Visit','完成拜访')}</button></div>`
+}
+function finishVisit(id){
+  const v=state.visits.find(x=>x.id===id);
+  const sel=[...document.getElementById('res_'+id).selectedOptions].map(o=>o.value);
+  getLocation(loc=>{
+    Object.assign(v,{status:'completed',endTime:new Date().toISOString(),endLat:loc.lat,endLng:loc.lng,endAccuracy:loc.accuracy,results:sel,orderAmount:+document.getElementById('order_'+id).value||0,collectionAmount:+document.getElementById('collection_'+id).value||0,followUp:document.getElementById('follow_'+id).value==='yes',remark:document.getElementById('remark_'+id).value.trim()});
+    save();renderApp();
+  });
+}
+
+function salesPlan(){
+  const date=tomorrowISO();
+  const mine=state.plans.filter(p=>p.salesId===session.userId&&p.date===date).sort((a,b)=>a.seq-b.seq);
+  const opts=state.customers.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('');
+  return `<div class="card"><div class="hero"><div><h2>${t("Tomorrow's Plan","明日拜访计划")}</h2><p class="muted">${fmtDate(date)}</p></div><span class="status ${mine.length?'completed':'pending'}">${mine.length?t('Submitted','已提交'):t('Not Submitted','未提交')}</span></div>
+  <div class="form-row">
+    <div><label>${t('Customer','客户')}</label><select id="planCustomer">${opts}</select></div>
+    <div><label>${t('Expected Time','预计时间')}</label><input type="time" id="planTime" value="09:00"></div>
+    <div><label>${t('Purpose','目的')}</label><select id="planPurpose"><option>Collection</option><option>Order</option><option>Product Introduction</option><option>Stock Check</option><option>Complaint</option><option>Price Discussion</option><option>Relationship Visit</option></select></div>
+    <div style="display:flex;align-items:end"><button class="btn btn-primary" style="width:100%" onclick="addPlan()">${t('Add to Plan','加入计划')}</button></div>
+  </div>
+  <div style="margin-top:18px">${mine.length?`<table><thead><tr><th>#</th><th>${t('Customer','客户')}</th><th>${t('Time','时间')}</th><th>${t('Purpose','目的')}</th><th></th></tr></thead><tbody>${mine.map(p=>`<tr><td>${p.seq}</td><td>${esc(customerName(p.customerId))}</td><td>${p.expectedTime}</td><td>${p.purpose.map(esc).join(', ')}</td><td><button class="btn btn-danger btn-small" onclick="deletePlan('${p.id}')">${t('Delete','删除')}</button></td></tr>`).join('')}</tbody></table>`:`<div class="note warning">${t('No visits added yet.','尚未添加拜访计划。')}</div>`}</div></div>`;
+}
+function addPlan(){
+  const customerId=document.getElementById('planCustomer').value;
+  const expectedTime=document.getElementById('planTime').value;
+  const purpose=[document.getElementById('planPurpose').value];
+  const date=tomorrowISO();
+  const seq=state.plans.filter(p=>p.salesId===session.userId&&p.date===date).length+1;
+  state.plans.push({id:uid('p'),salesId:session.userId,customerId,date,expectedTime,purpose,seq,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()});
+  save();renderApp();
+}
+function deletePlan(id){state.plans=state.plans.filter(p=>p.id!==id);save();renderApp()}
+
+function salesHistory(){
+  const rows=state.visits.filter(v=>v.salesId===session.userId).sort((a,b)=>b.startTime.localeCompare(a.startTime));
+  return `<div class="card"><h2>${t('My Visit History','我的拜访历史')}</h2>${visitTable(rows)}</div>`;
+}
+function managerDashboard(){
+  const today=todayISO();
+  const sales=state.users.filter(u=>u.role==='sales');
+  const plans=state.plans.filter(p=>p.date===today);
+  const visits=state.visits.filter(v=>v.date===today);
+  const completed=visits.filter(v=>v.status==='completed');
+  const active=visits.filter(v=>v.status==='active');
+  const totalOrder=completed.reduce((s,v)=>s+(v.orderAmount||0),0);
+  const totalCollection=completed.reduce((s,v)=>s+(v.collectionAmount||0),0);
+  const rows=sales.map(s=>{
+    const p=plans.filter(x=>x.salesId===s.id).length;
+    const v=completed.filter(x=>x.salesId===s.id).length;
+    const a=active.find(x=>x.salesId===s.id);
+    const rate=p?Math.round(v/p*100):0;
+    return `<tr><td>${esc(s.name)}</td><td>${p}</td><td>${v}</td><td>${a?esc(customerName(a.customerId)):t('No active visit','无进行中拜访')}</td><td><div class="progress"><span style="width:${Math.min(100,rate)}%"></span></div><small>${rate}%</small></td></tr>`
+  }).join('');
+  return `<div class="grid grid-4">
+    <div class="metric">${t('Planned Visits','计划拜访')}<b>${plans.length}</b></div>
+    <div class="metric">${t('Completed Visits','完成拜访')}<b>${completed.length}</b></div>
+    <div class="metric">${t('Orders (USD)','订单（USD）')}<b>${totalOrder.toFixed(2)}</b></div>
+    <div class="metric">${t('Collections (USD)','回款（USD）')}<b>${totalCollection.toFixed(2)}</b></div>
+  </div>
+  <div class="card"><h2>${t("Today's Execution","今日执行情况")}</h2><table><thead><tr><th>${t('Sales','销售')}</th><th>${t('Planned','计划')}</th><th>${t('Completed','完成')}</th><th>${t('Current Location','当前拜访')}</th><th>${t('Completion','完成率')}</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+function managerPlans(){
+  const date=tomorrowISO();
+  const sales=state.users.filter(u=>u.role==='sales');
+  return `<div class="card"><h2>${t("Tomorrow's Sales Plans","明日销售计划")}</h2><p class="muted">${fmtDate(date)}</p>
+  ${sales.map(s=>{
+    const ps=state.plans.filter(p=>p.salesId===s.id&&p.date===date).sort((a,b)=>a.seq-b.seq);
+    return `<div class="visit-card"><div class="visit-head"><h3>${esc(s.name)}</h3><span class="status ${ps.length?'completed':'pending'}">${ps.length?ps.length+' '+t('visits','个拜访'):t('Not submitted','未提交')}</span></div>
+    ${ps.length?`<table><thead><tr><th>#</th><th>${t('Customer','客户')}</th><th>${t('Time','时间')}</th><th>${t('Purpose','目的')}</th></tr></thead><tbody>${ps.map(p=>`<tr><td>${p.seq}</td><td>${esc(customerName(p.customerId))}</td><td>${p.expectedTime}</td><td>${p.purpose.map(esc).join(', ')}</td></tr>`).join('')}</tbody></table>`:''}</div>`
+  }).join('')}</div>`;
+}
+function managerRecords(){
+  const rows=[...state.visits].sort((a,b)=>(b.startTime||'').localeCompare(a.startTime||''));
+  return `<div class="card"><h2>${t('All Visit Records','全部拜访记录')}</h2>${visitTable(rows,true)}</div>`;
+}
+function visitTable(rows,showSales=false){
+  if(!rows.length)return `<div class="note warning">${t('No visit records yet.','暂无拜访记录。')}</div>`;
+  return `<table><thead><tr>${showSales?`<th>${t('Sales','销售')}</th>`:''}<th>${t('Date','日期')}</th><th>${t('Customer','客户')}</th><th>${t('Status','状态')}</th><th>${t('Time','时间')}</th><th>${t('Duration','时长')}</th><th>${t('Order','订单')}</th><th>${t('Collection','回款')}</th><th>${t('Remark','备注')}</th></tr></thead><tbody>
+  ${rows.map(v=>`<tr>${showSales?`<td>${esc(userName(v.salesId))}</td>`:''}<td>${fmtDate(v.date)}</td><td>${esc(customerName(v.customerId))}</td><td><span class="status ${v.status==='active'?'activevisit':v.status}">${v.status}</span></td><td>${fmtTime(v.startTime)}–${fmtTime(v.endTime)}</td><td>${duration(v)}</td><td>${(v.orderAmount||0).toFixed(2)}</td><td>${(v.collectionAmount||0).toFixed(2)}</td><td>${esc(v.remark||'')}</td></tr>`).join('')}</tbody></table>`
+}
+function masterData(){
+  return `<div class="grid grid-2">
+    <div class="card"><h2>${t('Customers','客户资料')}</h2>
+      <div class="form-row-3"><div><label>${t('Name','名称')}</label><input id="custName"></div><div><label>${t('Address','地址')}</label><input id="custAddress"></div><div style="display:flex;align-items:end"><button class="btn btn-primary" onclick="addCustomer()">${t('Add Customer','添加客户')}</button></div></div>
+      <table style="margin-top:14px"><thead><tr><th>${t('Customer','客户')}</th><th>${t('Address','地址')}</th><th></th></tr></thead><tbody>${state.customers.map(c=>`<tr><td>${esc(c.name)}</td><td>${esc(c.address)}</td><td><button class="btn btn-danger btn-small" onclick="deleteCustomer('${c.id}')">${t('Delete','删除')}</button></td></tr>`).join('')}</tbody></table>
+    </div>
+    <div class="card"><h2>${t('Sales Representatives','销售代表')}</h2>
+      <div class="form-row-3"><div><label>${t('Name','姓名')}</label><input id="salesName"></div><div></div><div style="display:flex;align-items:end"><button class="btn btn-primary" onclick="addSales()">${t('Add Sales Rep','添加销售')}</button></div></div>
+      <table style="margin-top:14px"><thead><tr><th>${t('Name','姓名')}</th><th></th></tr></thead><tbody>${state.users.filter(u=>u.role==='sales').map(u=>`<tr><td>${esc(u.name)}</td><td><button class="btn btn-danger btn-small" onclick="deleteSales('${u.id}')">${t('Delete','删除')}</button></td></tr>`).join('')}</tbody></table>
+    </div>
+  </div>`;
+}
+function addCustomer(){const name=document.getElementById('custName').value.trim();if(!name)return;state.customers.push({id:uid('c'),name,address:document.getElementById('custAddress').value.trim(),lat:null,lng:null});save();renderApp()}
+function deleteCustomer(id){if(state.plans.some(p=>p.customerId===id)||state.visits.some(v=>v.customerId===id)){alert(t('This customer already has records and cannot be deleted.','该客户已有记录，无法删除。'));return}state.customers=state.customers.filter(c=>c.id!==id);save();renderApp()}
+function addSales(){const name=document.getElementById('salesName').value.trim();if(!name)return;state.users.push({id:uid('s'),name,role:'sales'});save();renderApp()}
+function deleteSales(id){if(state.plans.some(p=>p.salesId===id)||state.visits.some(v=>v.salesId===id)){alert(t('This sales representative already has records and cannot be deleted.','该销售已有记录，无法删除。'));return}state.users=state.users.filter(u=>u.id!==id);save();renderApp()}
+
+function exportData(){
+  const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='sales_visit_tracker_data_'+todayISO()+'.json';a.click();URL.revokeObjectURL(a.href);
+}
+function importData(e){
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!d.users||!d.customers||!d.plans||!d.visits)throw Error();state=d;save();alert(t('Data imported successfully.','数据导入成功。'));renderApp()}catch(err){alert(t('Invalid data file.','数据文件无效。'))}};r.readAsText(f);
+}
+refreshUserOptions();
+renderSalesLoginButtons();
+applyLanguage();
+if(session){activeTab=session.role==='sales'?'today':'dashboard';renderApp()}
+</script>
+</body>
+</html>

@@ -1,467 +1,167 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Sales Visit Tracker V1.0</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0f5bd8">
+<title>Sales Visit Tracker V1.2</title>
 <style>
-  :root{
-    --blue:#0f5bd8; --blue2:#eaf2ff; --ink:#172033; --muted:#667085;
-    --line:#dfe5ef; --bg:#f5f7fb; --white:#fff; --green:#14804a;
-    --orange:#b54708; --red:#b42318; --shadow:0 8px 24px rgba(16,24,40,.08);
-  }
-  *{box-sizing:border-box}
-  body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--ink)}
-  button,input,select,textarea{font:inherit}
-  button{cursor:pointer}
-  .app{min-height:100vh}
-  .topbar{background:var(--white);border-bottom:1px solid var(--line);padding:12px 18px;display:flex;gap:12px;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
-  .brand{display:flex;align-items:center;gap:10px;font-weight:800}
-  .logo{width:36px;height:36px;border-radius:10px;background:var(--blue);display:grid;place-items:center;color:white}
-  .top-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-  .container{max-width:1180px;margin:0 auto;padding:18px}
-  .card{background:var(--white);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:18px;margin-bottom:16px}
-  .hero{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}
-  h1,h2,h3,p{margin-top:0}
-  h1{font-size:26px;margin-bottom:6px}
-  h2{font-size:20px}
-  h3{font-size:16px}
-  .muted{color:var(--muted)}
-  .grid{display:grid;gap:14px}
-  .grid-4{grid-template-columns:repeat(4,1fr)}
-  .grid-3{grid-template-columns:repeat(3,1fr)}
-  .grid-2{grid-template-columns:repeat(2,1fr)}
-  .metric{padding:16px;border:1px solid var(--line);border-radius:14px;background:#fff}
-  .metric b{font-size:28px;display:block;margin-top:8px}
-  .btn{border:none;border-radius:10px;padding:10px 14px;font-weight:700}
-  .btn-primary{background:var(--blue);color:white}
-  .btn-secondary{background:var(--blue2);color:var(--blue)}
-  .btn-danger{background:#fee4e2;color:var(--red)}
-  .btn-ghost{background:white;border:1px solid var(--line);color:var(--ink)}
-  .btn-small{padding:7px 10px;font-size:13px}
-  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
-  .tab{border:1px solid var(--line);background:#fff;padding:9px 12px;border-radius:999px}
-  .tab.active{background:var(--blue);color:white;border-color:var(--blue)}
-  label{display:block;font-size:13px;font-weight:700;margin-bottom:6px}
-  input,select,textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 11px;background:#fff}
-  textarea{min-height:84px;resize:vertical}
-  .form-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-  .form-row-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-  .form-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:12px}
-  table{width:100%;border-collapse:collapse}
-  th,td{padding:11px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
-  th{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.03em}
-  .status{display:inline-flex;padding:4px 8px;border-radius:999px;font-size:12px;font-weight:800}
-  .pending{background:#fff4e5;color:var(--orange)}
-  .activevisit{background:#eaf2ff;color:var(--blue)}
-  .completed{background:#e7f6ec;color:var(--green)}
-  .cancelled{background:#fee4e2;color:var(--red)}
-  .visit-card{border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:10px}
-  .visit-head{display:flex;justify-content:space-between;gap:12px}
-  .visit-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-  .pill{display:inline-block;background:#f2f4f7;border-radius:999px;padding:4px 8px;font-size:12px;margin:2px 4px 2px 0}
-  .hidden{display:none!important}
-  .login{max-width:680px;margin:5vh auto}
-  .sales-login-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:12px 0 22px}
-  .sales-login-btn{min-height:64px;border:2px solid var(--blue);background:#fff;color:var(--blue);border-radius:14px;font-size:17px;font-weight:800;padding:12px}
-  .sales-login-btn:active{background:var(--blue2);transform:scale(.99)}
-  .manager-login-box{border-top:1px solid var(--line);padding-top:18px;margin-top:8px}
-  .mobile-open-note{background:#fff7ed;border:1px solid #fed7aa;border-radius:12px;padding:12px;margin-bottom:14px;color:#9a3412}
-  .note{border-left:4px solid var(--blue);background:var(--blue2);padding:12px;border-radius:8px}
-  .warning{border-left-color:var(--orange);background:#fff7ed}
-  .progress{height:10px;background:#eef1f6;border-radius:999px;overflow:hidden}
-  .progress > span{display:block;height:100%;background:var(--blue)}
-  .right{text-align:right}
-  .footer{padding:20px;text-align:center;color:var(--muted);font-size:12px}
-  @media(max-width:800px){
-    .grid-4,.grid-3,.grid-2,.form-row,.form-row-3{grid-template-columns:1fr}
-    .hero{flex-direction:column}
-    .topbar{align-items:flex-start}
-    .top-actions{justify-content:flex-end}
-    table{display:block;overflow-x:auto}
-    .container{padding:10px}
-    .login{margin:12px auto;padding:14px}
-    .sales-login-grid{grid-template-columns:1fr}
-    .sales-login-btn{min-height:68px;font-size:18px}
-    .topbar{position:static}
-    .brand{font-size:14px}
-    .visit-actions .btn{width:100%;min-height:48px}
-  }
+:root{--blue:#0f5bd8;--blue2:#eaf2ff;--ink:#172033;--muted:#667085;--line:#dfe5ef;--bg:#f5f7fb;--green:#14804a;--orange:#b54708;--red:#b42318}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--ink)}button,input,select,textarea{font:inherit}button{cursor:pointer}
+header{position:sticky;top:0;z-index:10;background:white;border-bottom:1px solid var(--line);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+.brand{font-weight:800}.version{color:var(--muted);font-size:12px}main{max-width:1180px;margin:auto;padding:16px}.card{background:white;border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px;box-shadow:0 8px 24px rgba(16,24,40,.06)}
+.grid{display:grid;gap:12px}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}.btn{border:0;border-radius:12px;padding:12px 14px;font-weight:800}.primary{background:var(--blue);color:white}.secondary{background:var(--blue2);color:var(--blue)}.danger{background:#fee4e2;color:var(--red)}.ghost{background:white;border:1px solid var(--line)}
+.big{min-height:58px;font-size:17px;width:100%}.hidden{display:none!important}.muted{color:var(--muted)}.metric{padding:14px;border:1px solid var(--line);border-radius:14px;background:white}.metric b{display:block;font-size:26px;margin-top:6px}
+.customer{border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:10px}.row{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.badge{display:inline-block;padding:5px 9px;border-radius:999px;font-size:12px;font-weight:800}.ok{background:#e7f6ec;color:var(--green)}.warn{background:#fff4e5;color:var(--orange)}.bad{background:#fee4e2;color:var(--red)}.active{background:var(--blue2);color:var(--blue)}label{display:block;font-size:13px;font-weight:800;margin:10px 0 6px}input,select,textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:11px;background:white}textarea{min-height:82px}
+.tabs{display:flex;gap:8px;overflow:auto;margin-bottom:14px}.tab{white-space:nowrap;border:1px solid var(--line);background:white;padding:10px 12px;border-radius:999px}.tab.on{background:var(--blue);color:white}
+table{width:100%;border-collapse:collapse}th,td{padding:10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{font-size:12px;color:var(--muted)}img.photo{width:90px;height:70px;object-fit:cover;border-radius:8px;border:1px solid var(--line)}.notice{padding:12px;border-radius:12px;background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;margin-bottom:12px}
+progress{width:100%}
+@media(max-width:760px){main{padding:10px}.g3,.g4{grid-template-columns:1fr}header{position:static}table{display:block;overflow:auto}.desktop-only{display:none}.customer .row{flex-direction:column}}
 </style>
 </head>
 <body>
-<div class="app">
-  <header class="topbar">
-    <div class="brand"><div class="logo">SV</div><div>Sales Visit Tracker <span class="muted">V1.0</span></div></div>
-    <div class="top-actions">
-      <button class="btn btn-ghost btn-small" onclick="toggleLanguage()" id="langBtn">中文</button>
-      <button class="btn btn-ghost btn-small hidden" onclick="exportData()" id="exportBtn">Export</button>
-      <label class="btn btn-ghost btn-small hidden" id="importLabel">Import<input type="file" accept=".json" onchange="importData(event)" style="display:none"></label>
-      <button class="btn btn-danger btn-small hidden" onclick="logout()" id="logoutBtn">Logout</button>
-    </div>
-  </header>
-
-  <main class="container">
-    <section id="loginView" class="login card">
-      <div class="mobile-open-note">
-        <b data-en="Mobile users" data-zh="手机用户">Mobile users</b><br>
-        <span data-en="Download this file, then open it with Chrome or Safari. Do not use the WhatsApp preview." data-zh="请先下载文件，再使用 Chrome 或 Safari 打开。不要直接使用 WhatsApp 预览。">Download this file, then open it with Chrome or Safari. Do not use the WhatsApp preview.</span>
-      </div>
-      <h1 data-en="Sales Visit Tracker" data-zh="销售拜访追踪">Sales Visit Tracker</h1>
-      <p class="muted" data-en="Sales representatives: tap your name below. Managers: use the management login." data-zh="销售代表：直接点击自己的姓名。管理人员：使用下方管理入口。">Sales representatives: tap your name below. Managers: use the management login.</p>
-
-      <div id="salesQuickLogin">
-        <h3 data-en="Sales Representative Login" data-zh="销售代表登录">Sales Representative Login</h3>
-        <div id="salesLoginButtons" class="sales-login-grid"></div>
-      </div>
-
-      <div class="manager-login-box">
-        <h3 data-en="Management Login" data-zh="管理人员登录">Management Login</h3>
-        <div class="form-row-3">
-          <div><label data-en="Role" data-zh="角色">Role</label>
-            <select id="loginRole" onchange="refreshUserOptions()">
-              <option value="manager">Sales Director</option>
-              <option value="boss">Boss</option>
-            </select>
-          </div>
-          <div><label data-en="User" data-zh="用户">User</label><select id="loginUser"></select></div>
-          <div style="display:flex;align-items:end"><button class="btn btn-primary" style="width:100%" onclick="login()" data-en="Enter Dashboard" data-zh="进入管理后台">Enter Dashboard</button></div>
-        </div>
-      </div>
-      <div class="note warning" style="margin-top:16px">
-        <b data-en="Important pilot limitation" data-zh="试用版重要限制">Important pilot limitation</b>
-        <div class="muted" data-en="Data is stored in this browser only. Use Export/Import to move test data between devices. Real-time multi-user synchronization requires a cloud database in the next version." data-zh="数据只保存在当前浏览器中。可通过导出/导入在设备之间传递测试数据。真正的多用户实时同步需要下一版本接入云数据库。">Data is stored in this browser only. Use Export/Import to move test data between devices. Real-time multi-user synchronization requires a cloud database in the next version.</div>
-      </div>
-    </section>
-
-    <section id="mainView" class="hidden">
-      <div class="card hero">
-        <div>
-          <h1 id="welcomeTitle">Welcome</h1>
-          <p class="muted" id="welcomeSub"></p>
-        </div>
-        <div id="roleBadge" class="status activevisit"></div>
-      </div>
-
-      <div id="tabs" class="tabs"></div>
-      <div id="content"></div>
-    </section>
-  </main>
-  <div class="footer">Sales Visit Tracker V1.0 · Local Pilot</div>
+<header><div><div class="brand">Sales Visit Tracker</div><div class="version">V1.2 Pilot</div></div><button class="btn ghost" id="logoutBtn" onclick="logout()" style="display:none">Logout</button></header>
+<main>
+<section id="loginView">
+<div class="card">
+<h1>Sales Login</h1><p class="muted">Choose your name to open your mobile workspace.</p>
+<div class="grid g3" id="salesButtons"></div>
 </div>
+<div class="card">
+<h2>Management Login</h2>
+<div class="grid g3">
+<select id="managerRole"><option value="director">Sales Director</option><option value="boss">Boss</option></select>
+<input id="managerPin" type="password" inputmode="numeric" placeholder="Pilot PIN">
+<button class="btn primary" onclick="managerLogin()">Enter Dashboard</button>
+</div>
+<p class="muted" style="margin-top:10px">Pilot PIN: Sales Director 2468 · Boss 1357</p>
+</div>
+</section>
+
+<section id="appView" class="hidden">
+<div class="card"><div class="row"><div><h1 id="welcome"></h1><div class="muted" id="todayText"></div></div><span class="badge active" id="roleBadge"></span></div></div>
+<div class="tabs" id="tabs"></div>
+<div id="content"></div>
+</section>
+</main>
 
 <script>
-const KEY='svt_v1_data';
-const SESSION='svt_v1_session';
-let lang=localStorage.getItem('svt_lang')||'en';
-let state=loadState();
-let session=JSON.parse(localStorage.getItem(SESSION)||'null');
-let activeTab='';
+const SALES=[{"id": "SAL-0001", "name": "Tadiwa", "mobile": "+263781156751", "role": "sales"}, {"id": "SAL-0002", "name": "Faith", "mobile": "+263772424393", "role": "sales"}, {"id": "SAL-0003", "name": "Lindiwe", "mobile": "+263775424364", "role": "sales"}];
+const CUSTOMERS=[{"id": "CUS-0001", "name": "Yarbort", "salesName": "Tadiwa", "region": "Harare", "area": "Highglen", "address": "21c Highglen Shopping Centre, Harare", "mobile": "+263786256359", "status": "Active"}, {"id": "CUS-0002", "name": "Spar Montagu", "salesName": "Tadiwa", "region": "Harare", "area": "Montagu", "address": "Montagu Shopping Center Five Ave, Harare", "mobile": "+263719726667", "status": "Active"}, {"id": "CUS-0003", "name": "Thatcher", "salesName": "Tadiwa", "region": "Harare", "area": "Chishawasha", "address": "1167 Chishawasha Hills, Harare", "mobile": "+263775506877", "status": "Active"}, {"id": "CUS-0004", "name": "Streams of Life", "salesName": "Tadiwa", "region": "Harare", "area": "Hatfield", "address": "12099 Hatfield 122 Crescent, Harare", "mobile": "+263779514863", "status": "Active"}, {"id": "CUS-0005", "name": "Fugawo Investment", "salesName": "Tadiwa", "region": "Norton", "area": "Norton", "address": "Shop 1306 Ngoni shops, Norton", "mobile": "+263772294486", "status": "Active"}, {"id": "CUS-0006", "name": "Lomuc Bookshop", "salesName": "Tadiwa", "region": "Norton", "area": "Norton", "address": "2019 LC Complex Katanga, Norton", "mobile": "+263776077382", "status": "Active"}, {"id": "CUS-0007", "name": "TM Ribbon Supplies", "salesName": "Tadiwa", "region": "Harare", "area": "Graniteside", "address": "Shop no.5 Kelvin Corner Graniteside, Harare", "mobile": "+263773419763", "status": "Active"}, {"id": "CUS-0008", "name": "Tera Twist Stationery", "salesName": "Tadiwa", "region": "Norton", "area": "Norton", "address": "2017 LC Complex Katanga, Norton", "mobile": "+263784501214", "status": "Active"}, {"id": "CUS-0009", "name": "Tapfuma Trading", "salesName": "Tadiwa", "region": "Harare", "area": "Dziwarasekwa", "address": "3446 Dziwarasekwa 2 shops, Harare", "mobile": "+263771233814", "status": "Active"}, {"id": "CUS-0010", "name": "Space Wax", "salesName": "Tadiwa", "region": "Harare", "area": "Highglen", "address": "Shop 46 Highglen shopping Center, Harare", "mobile": "+263779864945", "status": "Active"}, {"id": "CUS-0011", "name": "Tanja", "salesName": "Tadiwa", "region": "Harare", "area": "Harare", "address": "21 Corner Nelson and Leopord Takawira, Harare", "mobile": "+263772394480", "status": "Active"}, {"id": "CUS-0012", "name": "PnP Joina Center", "salesName": "Tadiwa", "region": "Harare", "area": "Harare", "address": "Joiner Center Corner Jason Moyo and Julius Nyerere", "mobile": "+263719073141", "status": "Active"}, {"id": "CUS-0013", "name": "Century Computers", "salesName": "Faith", "region": "Kwekwe", "area": "Kwekwe", "address": "Shop 4, CAIPF Building, Railway rd, Kwekwe", "mobile": "+263772101138", "status": "Active"}, {"id": "CUS-0014", "name": "Colours Stationery", "salesName": "Faith", "region": "Harare", "area": "Highlands", "address": "1 Montgomery Rd, Highlands", "mobile": "+263773329944", "status": "Active"}, {"id": "CUS-0015", "name": "St One Pvt Ltd", "salesName": "Faith", "region": "Harare", "area": "Highlands", "address": "41 Glenara Avenue, Highlands", "mobile": "+263783410771", "status": "Active"}, {"id": "CUS-0016", "name": "TV Sales and Hire", "salesName": "Faith", "region": "Harare", "area": "First St", "address": "Edward Building, First St", "mobile": "+263773382298", "status": "Active"}, {"id": "CUS-0017", "name": "KM Creative", "salesName": "Faith", "region": "Harare", "area": "Kamfinsa", "address": "Shop 3, The Hub Mall, Kamfinsa", "mobile": "+263773614518", "status": "Active"}, {"id": "CUS-0018", "name": "Chalmon", "salesName": "Faith", "region": "Harare", "area": "Office 217", "address": "Gelfand House, 1st/Speke, Office 217", "mobile": "+263772289852", "status": "Active"}, {"id": "CUS-0019", "name": "Power Speed", "salesName": "Faith", "region": "Harare", "area": "Graniteside", "address": "Gate 1 Powerspeed Complex, Graniteside", "mobile": "+263735235874", "status": "Active"}, {"id": "CUS-0020", "name": "Scripted Stationery", "salesName": "Faith", "region": "Harare", "area": "Harare", "address": "16 Greendale Ave, Harare", "mobile": "+263772218165", "status": "Active"}, {"id": "CUS-0021", "name": "Metrosol Pvt Ltd", "salesName": "Faith", "region": "Harare", "area": "Newlands", "address": "Shop 4 CBZ Corner, Newlands", "mobile": "+263774828514", "status": "Active"}, {"id": "CUS-0022", "name": "Snowvave investments", "salesName": "Faith", "region": "Harare", "area": "Waterfalls", "address": "87 Chiltern Rd, Waterfalls", "mobile": "+263773120558", "status": "Active"}, {"id": "CUS-0023", "name": "Appliance Experts", "salesName": "Faith", "region": "Harare", "area": "Harare", "address": "85 Nelson Mandela Ave, Harare", "mobile": "+263772355743", "status": "Active"}, {"id": "CUS-0024", "name": "Squiggles Bookstore", "salesName": "Faith", "region": "Harare", "area": "Mt Pleasant", "address": "Shop No 4, CABS House, Bond St, Mt Pleasant", "mobile": "+263772940503", "status": "Active"}, {"id": "CUS-0025", "name": "Connexional Bookshop", "salesName": "Faith", "region": "Harare", "area": "Harare", "address": "7 Central Ave, Harare", "mobile": "+263772757561", "status": "Active"}, {"id": "CUS-0026", "name": "Thompsons Bookshop", "salesName": "Faith", "region": "Harare", "area": "Borrowdale", "address": "Shop 88 Sam Levy's Village, Borrowdale", "mobile": "+263772324199", "status": "Active"}, {"id": "CUS-0027", "name": "Bhola", "salesName": "Faith", "region": "Harare", "area": "Msasa", "address": "7 Kingsdale Walk, Msasa", "mobile": "+263773217124", "status": "Active"}, {"id": "CUS-0028", "name": "Tammy", "salesName": "Faith", "region": "Harare", "area": "Belvedere", "address": "37 Princess Rd, Belvedere", "mobile": "+263775346868", "status": "Active"}, {"id": "CUS-0029", "name": "Typocrafters", "salesName": "Faith", "region": "Harare", "area": "Cnr George/Sam Nujoma", "address": "Herald House, Cnr George/Sam Nujoma", "mobile": "+263777093917", "status": "Active"}, {"id": "CUS-0030", "name": "Polymaster Packaging", "salesName": "Lindiwe", "region": "Harare", "area": "Harare", "address": "13634 Sebbasa Park", "mobile": "+263773599292", "status": "Active"}, {"id": "CUS-0031", "name": "Top Class Supermarket", "salesName": "Lindiwe", "region": "Harare", "area": "Mabvuku", "address": "21 Ndindindi Street old Tafara", "mobile": "+263774796516", "status": "Active"}, {"id": "CUS-0032", "name": "Cyberweb Investments", "salesName": "Lindiwe", "region": "Harare", "area": "Harare", "address": "49 George Silundika", "mobile": "+263774054556", "status": "Active"}, {"id": "CUS-0033", "name": "Tichbay", "salesName": "Lindiwe", "region": "Harare", "area": "Harare", "address": "Suite 201 sec floor Labos Hs R Manyika", "mobile": "+263776400618", "status": "Active"}, {"id": "CUS-0034", "name": "Julian", "salesName": "Lindiwe", "region": "Harare", "area": "Newlands", "address": "105 Newland", "mobile": "+263779945256", "status": "Active"}, {"id": "CUS-0035", "name": "Munamati Stationery", "salesName": "Lindiwe", "region": "Harare", "area": "Mabvuku", "address": "101 Kamunhu Shopping Centre", "mobile": "+263776630843", "status": "Active"}, {"id": "CUS-0036", "name": "Tafsight Bookshop", "salesName": "Lindiwe", "region": "Harare", "area": "Harare", "address": "49 Speke Avenue", "mobile": "+263772562804", "status": "Active"}, {"id": "CUS-0037", "name": "Ruwa Stationery t/a Maha Stationery", "salesName": "Lindiwe", "region": "Harare", "area": "Ruwa", "address": "Munondo Rd Maha Complex", "mobile": "+263780192084", "status": "Active"}, {"id": "CUS-0038", "name": "Mutenure", "salesName": "Lindiwe", "region": "Harare", "area": "Harare", "address": "101 Munondo Ruwa", "mobile": "+263712519574", "status": "Active"}, {"id": "CUS-0039", "name": "Lilys", "salesName": "Lindiwe", "region": "Harare", "area": "Harare", "address": "14531 Musasa Damafalls", "mobile": "+263773255323", "status": "Active"}, {"id": "CUS-0040", "name": "Matsika Investments", "salesName": "Lindiwe", "region": "Harare", "area": "Harare", "address": "09 Robson Manyika Harare", "mobile": "+263772550869", "status": "Active"}, {"id": "CUS-0041", "name": "Mai Chiedza", "salesName": "Lindiwe", "region": "Harare", "area": "Harare", "address": "346 Rezende Harare", "mobile": "+263777597984", "status": "Active"}, {"id": "CUS-0042", "name": "Mr Banda", "salesName": "Lindiwe", "region": "Harare", "area": "Mabvuku", "address": "102 Kamunhu Shopping Centre", "mobile": "+263772487849", "status": "Active"}, {"id": "CUS-0043", "name": "Burnishford Enterprise", "salesName": "Lindiwe", "region": "Harare", "area": "Harare", "address": "32 Jason Moyo", "mobile": "+263772780617", "status": "Active"}, {"id": "CUS-0044", "name": "Best Books", "salesName": "Lindiwe", "region": "Harare", "area": "Harare", "address": "54 Three Anchor House Jason Moyo", "mobile": "+263775434466", "status": "Active"}, {"id": "CUS-0045", "name": "Cybrex/Athlone mart", "salesName": "Lindiwe", "region": "Harare", "area": "Athlone", "address": "7072 Greengrove Rd Athlone Park", "mobile": "+263773014292", "status": "Active"}, {"id": "CUS-0046", "name": "Treasure times", "salesName": "Lindiwe", "region": "Harare", "area": "Harare", "address": "Shop2 parkade samora machael", "mobile": "+263773924104", "status": "Active"}, {"id": "CUS-0047", "name": "Legacy", "salesName": "Lindiwe", "region": "Harare", "area": "Ruwa", "address": "292 Chihombe rd ruwa", "mobile": "+263772329076", "status": "Active"}, {"id": "CUS-0048", "name": "Chidemo", "salesName": "Lindiwe", "region": "Kadoma", "area": "Kadoma", "address": "277 Sarudzai shopping centre kadomo", "mobile": "+263775731895", "status": "Active"}, {"id": "CUS-0049", "name": "Blessed", "salesName": "Lindiwe", "region": "Harare", "area": "Harare", "address": "54 Rezende Containers", "mobile": "+263775155333", "status": "Active"}, {"id": "CUS-0050", "name": "Classic Smkt", "salesName": "Lindiwe", "region": "Harare", "area": "Budiriro", "address": "Shop 15 Budiriro 4 complex", "mobile": "+263772325468", "status": "Active"}, {"id": "CUS-0051", "name": "Lifestyle Bookshop", "salesName": "Lindiwe", "region": "Harare", "area": "Harare", "address": "29 Eastgate mall", "mobile": "+263784535931", "status": "Active"}, {"id": "CUS-0052", "name": "Chase Stationery", "salesName": "Lindiwe", "region": "Harare", "area": "Harare", "address": "23 Kaymar flats", "mobile": "+263776881282", "status": "Active"}, {"id": "CUS-0053", "name": "Copyrise Pvt Ltd", "salesName": "Lindiwe", "region": "Harare", "area": "Harare", "address": "1Trogmonton cnr Julius and Samora", "mobile": "+263776059672", "status": "Active"}, {"id": "CUS-0054", "name": "Clamount", "salesName": "Lindiwe", "region": "Harare", "area": "Harare", "address": "30C Julius nyerere", "mobile": "+263777524643", "status": "Active"}, {"id": "CUS-0055", "name": "Stationery Kings", "salesName": "Lindiwe", "region": "Harare", "area": "Harare", "address": "19 Robson Manyika street", "mobile": "+263772490690", "status": "Active"}, {"id": "CUS-0056", "name": "Revel eland", "salesName": "Lindiwe", "region": "Harare", "area": "Ruwa", "address": "2610 Herbert Chitepo ruwa", "mobile": "+263777950278", "status": "Active"}, {"id": "CUS-0057", "name": "Uporon", "salesName": "Lindiwe", "region": "Harare", "area": "Marondera", "address": "41 EML Street Marondera", "mobile": "+263773095148", "status": "Active"}, {"id": "CUS-0058", "name": "Mai Shekaina", "salesName": "Lindiwe", "region": "Harare", "area": "Harare", "address": "50 Rezende TN MALL", "mobile": "+263775071782", "status": "Active"}, {"id": "CUS-0059", "name": "sewere", "salesName": "Lindiwe", "region": "Harare", "area": "Harare", "address": "3 Rezende container", "mobile": "+263779381463", "status": "Active"}, {"id": "CUS-0060", "name": "Bookshop Gazebo", "salesName": "Lindiwe", "region": "Harare", "area": "Mabvuku", "address": "10 bookshop gazebo", "mobile": "+263772771804", "status": "Active"}, {"id": "CUS-0061", "name": "You Save", "salesName": "Lindiwe", "region": "Harare", "area": "Ruwa", "address": "101 George complex ruwa", "mobile": "+263719581398", "status": "Active"}].map(c=>({...c,salesId:SALES.find(s=>s.name===c.salesName)?.id}));
+const KEY='svt_v12_data',SESSION='svt_v12_session';
+let state=load(), session=JSON.parse(localStorage.getItem(SESSION)||'null'), tab='';
 
-function seed(){
-  return {
-    users:[
-      {id:'s1',name:'Tendai G',role:'sales'},
-      {id:'s2',name:'Tadiwa',role:'sales'},
-      {id:'s3',name:'Tinashe',role:'sales'},
-      {id:'m1',name:'Sales Director',role:'manager'},
-      {id:'b1',name:'Boss',role:'boss'}
-    ],
-    customers:[
-      {id:'c1',name:'PnP Borrowdale',address:'Borrowdale, Harare',lat:null,lng:null},
-      {id:'c2',name:'OK Zimbabwe',address:'Harare',lat:null,lng:null},
-      {id:'c3',name:'Bon Marche',address:'Harare',lat:null,lng:null},
-      {id:'c4',name:'Food Basket',address:'Harare',lat:null,lng:null},
-      {id:'c5',name:'Essay',address:'Harare',lat:null,lng:null}
-    ],
-    plans:[], visits:[]
-  };
-}
-function loadState(){
-  try{return JSON.parse(localStorage.getItem(KEY))||seed()}catch(e){return seed()}
-}
+function seed(){return {visits:[],customerLocations:{}}}
+function load(){try{return Object.assign(seed(),JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){return seed()}}
 function save(){localStorage.setItem(KEY,JSON.stringify(state))}
-function uid(p){return p+Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
-function t(en,zh){return lang==='en'?en:zh}
-function todayISO(d=new Date()){return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10)}
-function tomorrowISO(){let d=new Date();d.setDate(d.getDate()+1);return todayISO(d)}
-function fmtDate(s){if(!s)return'-';return new Date(s+'T00:00:00').toLocaleDateString(lang==='en'?'en-GB':'zh-CN',{day:'2-digit',month:'short',year:'numeric'})}
-function fmtTime(s){if(!s)return'-';return new Date(s).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}
-function duration(v){
-  if(!v.startTime||!v.endTime)return'-';
-  return Math.max(0,Math.round((new Date(v.endTime)-new Date(v.startTime))/60000))+' '+t('min','分钟');
-}
-function userName(id){return state.users.find(x=>x.id===id)?.name||'-'}
-function customerName(id){return state.customers.find(x=>x.id===id)?.name||'-'}
-function esc(s=''){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function uid(){return 'VIS-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,6)}
+function esc(s=''){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function nowISO(){return new Date().toISOString()}
+function dateISO(d=new Date()){return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10)}
+function fmt(dt){return dt?new Date(dt).toLocaleString('en-GB',{dateStyle:'medium',timeStyle:'short'}):'-'}
+function mins(v){return v.endTime?Math.max(0,Math.round((new Date(v.endTime)-new Date(v.startTime))/60000)):0}
+function salesById(id){return SALES.find(s=>s.id===id)}
+function custById(id){return CUSTOMERS.find(c=>c.id===id)}
 
-function applyLanguage(){
-  document.documentElement.lang=lang;
-  document.querySelectorAll('[data-en]').forEach(el=>el.textContent=el.dataset[lang]);
-  document.getElementById('langBtn').textContent=lang==='en'?'中文':'English';
-  if(session) renderApp(); else refreshUserOptions();
+function initLogin(){
+ document.getElementById('salesButtons').innerHTML=SALES.map(s=>`<button class="btn secondary big" onclick="salesLogin('${s.id}')">${esc(s.name)}</button>`).join('');
 }
-function toggleLanguage(){lang=lang==='en'?'zh':'en';localStorage.setItem('svt_lang',lang);applyLanguage()}
-
-function renderSalesLoginButtons(){
-  const box=document.getElementById('salesLoginButtons');
-  if(!box)return;
-  box.innerHTML=state.users.filter(u=>u.role==='sales')
-    .map(u=>`<button class="sales-login-btn" onclick="quickSalesLogin('${u.id}')">${esc(u.name)}</button>`)
-    .join('');
+function salesLogin(id){session={role:'sales',userId:id};localStorage.setItem(SESSION,JSON.stringify(session));tab='customers';render()}
+function managerLogin(){
+ const role=document.getElementById('managerRole').value,pin=document.getElementById('managerPin').value;
+ if((role==='director'&&pin!=='2468')||(role==='boss'&&pin!=='1357'))return alert('Incorrect PIN');
+ session={role,userId:role};localStorage.setItem(SESSION,JSON.stringify(session));tab='dashboard';render();
 }
-function quickSalesLogin(userId){
-  session={role:'sales',userId};
-  localStorage.setItem(SESSION,JSON.stringify(session));
-  activeTab='today';
-  renderApp();
+function logout(){localStorage.removeItem(SESSION);session=null;document.getElementById('appView').classList.add('hidden');document.getElementById('loginView').classList.remove('hidden');document.getElementById('logoutBtn').style.display='none'}
+function render(){
+ if(!session)return;
+ document.getElementById('loginView').classList.add('hidden');document.getElementById('appView').classList.remove('hidden');document.getElementById('logoutBtn').style.display='block';
+ const u=session.role==='sales'?salesById(session.userId):{name:session.role==='boss'?'Boss':'Sales Director'};
+ document.getElementById('welcome').textContent='Welcome, '+u.name;
+ document.getElementById('todayText').textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+ document.getElementById('roleBadge').textContent=session.role==='sales'?'Sales Representative':session.role==='boss'?'Boss':'Sales Director';
+ const defs=session.role==='sales'?[['customers','My Customers'],['active','Active Visit'],['history','My History']]:[['dashboard','Today Dashboard'],['records','Visit Records'],['data','Pilot Data']];
+ document.getElementById('tabs').innerHTML=defs.map(x=>`<button class="tab ${tab===x[0]?'on':''}" onclick="tab='${x[0]}';render()">${x[1]}</button>`).join('');
+ document.getElementById('content').innerHTML=session.role==='sales'?(tab==='customers'?salesCustomers():tab==='active'?activeVisitView():salesHistory()):(tab==='dashboard'?dashboard():tab==='records'?records():pilotData());
 }
-function refreshUserOptions(){
-  const role=document.getElementById('loginRole')?.value||'manager';
-  const select=document.getElementById('loginUser');
-  if(select) select.innerHTML=state.users.filter(u=>u.role===role).map(u=>`<option value="${u.id}">${esc(u.name)}</option>`).join('');
-  renderSalesLoginButtons();
+function myCustomers(){return CUSTOMERS.filter(c=>c.salesId===session.userId)}
+function salesCustomers(){
+ const active=state.visits.find(v=>v.salesId===session.userId&&v.status==='active');
+ return `<div class="card"><h2>My Active Customers</h2><p class="muted">${myCustomers().length} customers assigned for the pilot.</p>
+ ${active?`<div class="notice">You already have an active visit at <b>${esc(custById(active.customerId).name)}</b>. Finish it before starting another.</div>`:''}
+ ${myCustomers().map(c=>`<div class="customer"><div class="row"><div><h3>${esc(c.name)}</h3><div class="muted">${esc(c.address)}</div><div class="muted">${esc(c.mobile||'')}</div></div><button class="btn primary big" ${active?'disabled':''} onclick="startVisit('${c.id}')">Start Visit</button></div></div>`).join('')}</div>`;
 }
-function login(){
-  const role=document.getElementById('loginRole').value;
-  const userId=document.getElementById('loginUser').value;
-  session={role,userId};localStorage.setItem(SESSION,JSON.stringify(session));
-  activeTab='dashboard';
-  renderApp();
+function getGPS(){
+ return new Promise((resolve,reject)=>{
+  if(!navigator.geolocation)return reject(new Error('GPS is not supported on this device.'));
+  navigator.geolocation.getCurrentPosition(p=>resolve({lat:+p.coords.latitude.toFixed(6),lng:+p.coords.longitude.toFixed(6),accuracy:Math.round(p.coords.accuracy)}),e=>reject(new Error('GPS permission is required to start or finish a visit.')),{enableHighAccuracy:true,timeout:20000,maximumAge:0});
+ });
 }
-function logout(){localStorage.removeItem(SESSION);session=null;document.getElementById('mainView').classList.add('hidden');document.getElementById('loginView').classList.remove('hidden');document.getElementById('logoutBtn').classList.add('hidden');document.getElementById('exportBtn').classList.add('hidden');document.getElementById('importLabel').classList.add('hidden');refreshUserOptions();renderSalesLoginButtons()}
-
-function renderApp(){
-  if(!session)return;
-  document.getElementById('loginView').classList.add('hidden');
-  document.getElementById('mainView').classList.remove('hidden');
-  ['logoutBtn','exportBtn','importLabel'].forEach(id=>document.getElementById(id).classList.remove('hidden'));
-  const u=state.users.find(x=>x.id===session.userId);
-  document.getElementById('welcomeTitle').textContent=t('Welcome, ','欢迎，')+(u?.name||'');
-  document.getElementById('welcomeSub').textContent=new Date().toLocaleDateString(lang==='en'?'en-GB':'zh-CN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-  document.getElementById('roleBadge').textContent=session.role==='sales'?t('Sales Representative','销售代表'):session.role==='manager'?t('Sales Director','销售总监'):t('Boss','老板');
-  renderTabs();renderContent();
+async function startVisit(customerId){
+ if(state.visits.some(v=>v.salesId===session.userId&&v.status==='active'))return alert('Finish the current visit first.');
+ try{
+  const gps=await getGPS();
+  state.visits.push({id:uid(),salesId:session.userId,customerId,status:'active',date:dateISO(),startTime:nowISO(),startGPS:gps,photo:null,result:null,remark:'',endTime:null,endGPS:null});
+  save();tab='active';render();
+ }catch(e){alert(e.message)}
 }
-function renderTabs(){
-  const defs=session.role==='sales'?
-    [['today',t("Today's Visits",'今日拜访')],['plan',t("Tomorrow's Plan",'明日计划')],['history',t('My History','我的历史')]]:
-    [['dashboard',t("Today's Dashboard",'今日看板')],['plans',t("Tomorrow's Plans",'明日计划')],['records',t('Visit Records','拜访记录')],['master',t('Master Data','基础资料')]];
-  if(!activeTab)activeTab=defs[0][0];
-  document.getElementById('tabs').innerHTML=defs.map(([id,label])=>`<button class="tab ${activeTab===id?'active':''}" onclick="activeTab='${id}';renderApp()">${label}</button>`).join('');
+function activeVisitView(){
+ const v=state.visits.find(v=>v.salesId===session.userId&&v.status==='active');
+ if(!v)return `<div class="card"><h2>No Active Visit</h2><p class="muted">Start a visit from My Customers.</p></div>`;
+ const c=custById(v.customerId);
+ return `<div class="card"><h2>${esc(c.name)}</h2><p class="muted">${esc(c.address)}</p><div class="badge active">Started ${fmt(v.startTime)}</div>
+ <label>Take a live site photo</label><input id="photoInput" type="file" accept="image/*" capture="environment" onchange="previewPhoto(event)">
+ <div id="photoPreview">${v.photo?`<img class="photo" src="${v.photo}">`:''}</div>
+ <label>Visit result</label><select id="result"><option value="">Select result</option><option>Order Taken</option><option>No Order</option><option>Need Follow-up</option><option>Customer Closed</option><option>Payment Collected</option></select>
+ <label>Remark</label><textarea id="remark" placeholder="Key customer feedback or next action"></textarea>
+ <button class="btn primary big" style="margin-top:14px" onclick="finishVisit('${v.id}')">Finish Visit</button></div>`;
 }
-function renderContent(){
-  const c=document.getElementById('content');
-  if(session.role==='sales'){
-    if(activeTab==='today')c.innerHTML=salesToday();
-    if(activeTab==='plan')c.innerHTML=salesPlan();
-    if(activeTab==='history')c.innerHTML=salesHistory();
-  }else{
-    if(activeTab==='dashboard')c.innerHTML=managerDashboard();
-    if(activeTab==='plans')c.innerHTML=managerPlans();
-    if(activeTab==='records')c.innerHTML=managerRecords();
-    if(activeTab==='master')c.innerHTML=masterData();
-  }
+function previewPhoto(e){
+ const f=e.target.files[0];if(!f)return;
+ if(f.size>8*1024*1024){alert('Photo is too large. Please retake at a lower resolution.');e.target.value='';return}
+ const r=new FileReader();r.onload=()=>{document.getElementById('photoPreview').innerHTML=`<img class="photo" src="${r.result}">`;document.getElementById('photoPreview').dataset.photo=r.result};r.readAsDataURL(f);
 }
-
-function salesToday(){
-  const today=todayISO();
-  const plans=state.plans.filter(p=>p.salesId===session.userId&&p.date===today);
-  const visits=state.visits.filter(v=>v.salesId===session.userId&&v.date===today);
-  const completed=visits.filter(v=>v.status==='completed').length;
-  const active=visits.find(v=>v.status==='active');
-  const plannedIds=new Set(plans.map(p=>p.customerId));
-  const cards=plans.map(p=>{
-    const v=visits.find(x=>x.planId===p.id);
-    return visitCard(p,v);
-  }).join('');
-  const unplanned=visits.filter(v=>!v.planId).map(v=>visitCard(null,v)).join('');
-  return `
-  <div class="grid grid-3">
-    <div class="metric">${t('Planned','计划')}<b>${plans.length}</b></div>
-    <div class="metric">${t('Completed','已完成')}<b>${completed}</b></div>
-    <div class="metric">${t('Remaining','剩余')}<b>${Math.max(0,plans.length-completed)}</b></div>
-  </div>
-  ${active?`<div class="note" style="margin:16px 0"><b>${t('Active visit: ','正在拜访：')}${customerName(active.customerId)}</b> · ${fmtTime(active.startTime)}</div>`:''}
-  <div class="card"><div class="hero"><div><h2>${t("Today's Visits","今日拜访")}</h2><p class="muted">${fmtDate(today)}</p></div>
-  <button class="btn btn-secondary" onclick="showUnplannedForm()">${t('+ Add Unplanned Visit','+ 添加临时拜访')}</button></div>
-  <div id="unplannedForm" class="hidden">${unplannedForm()}</div>
-  ${cards||`<div class="note warning">${t('No plan was submitted for today. You can add an unplanned visit.','今天没有已提交计划，可以添加临时拜访。')}</div>`}
-  ${unplanned?`<h3 style="margin-top:18px">${t('Unplanned Visits','临时拜访')}</h3>${unplanned}`:''}
-  </div>`;
+async function finishVisit(id){
+ const v=state.visits.find(x=>x.id===id),result=document.getElementById('result').value,photo=document.getElementById('photoPreview').dataset.photo||v.photo;
+ if(!photo)return alert('A live site photo is required.');
+ if(!result)return alert('Select a visit result.');
+ try{
+  const gps=await getGPS();
+  Object.assign(v,{status:'completed',endTime:nowISO(),endGPS:gps,photo,result,remark:document.getElementById('remark').value.trim()});
+  if(!state.customerLocations[v.customerId])state.customerLocations[v.customerId]={lat:v.startGPS.lat,lng:v.startGPS.lng,accuracy:v.startGPS.accuracy,sourceVisitId:v.id,confirmed:false};
+  save();tab='history';render();
+ }catch(e){alert(e.message)}
 }
-function visitCard(plan,v){
-  const customerId=plan?plan.customerId:v.customerId;
-  const status=v?.status||'pending';
-  const purpose=(plan?.purpose||v?.purpose||[]).map(x=>`<span class="pill">${esc(x)}</span>`).join('');
-  let actions='';
-  if(!v) actions=`<button class="btn btn-primary" onclick="startVisit('${plan.id}','${customerId}')">${t('Start Visit','开始拜访')}</button>`;
-  else if(v.status==='active') actions=`<button class="btn btn-primary" onclick="showFinish('${v.id}')">${t('Finish Visit','结束拜访')}</button>`;
-  else actions=`<span class="muted">${t('Completed','已完成')} · ${duration(v)}</span>`;
-  return `<div class="visit-card">
-    <div class="visit-head"><div><h3>${esc(customerName(customerId))}</h3><div class="muted">${esc(state.customers.find(c=>c.id===customerId)?.address||'')}</div></div>
-    <span class="status ${status==='active'?'activevisit':status}">${status==='pending'?t('Pending','待拜访'):status==='active'?t('In Progress','进行中'):t('Completed','已完成')}</span></div>
-    <div style="margin-top:8px">${purpose}</div>
-    ${v?`<div class="muted" style="margin-top:8px">${t('Start','开始')}: ${fmtTime(v.startTime)} · ${t('End','结束')}: ${fmtTime(v.endTime)} · GPS: ${v.startLat??'-'}, ${v.startLng??'-'}</div>`:''}
-    <div class="visit-actions">${actions}</div>
-    ${v?.status==='active'?`<div id="finish_${v.id}" class="hidden" style="margin-top:14px">${finishForm(v.id)}</div>`:''}
-  </div>`;
+function evidence(v){
+ let score=0,issues=[];
+ if(v.startGPS)score++;else issues.push('No start GPS');
+ if(v.endGPS)score++;else issues.push('No end GPS');
+ if(v.photo)score++;else issues.push('No photo');
+ if(mins(v)>=2)score++;else issues.push('Very short visit');
+ if(v.startGPS&&v.startGPS.accuracy<=100)score++;else issues.push('Low GPS accuracy');
+ return {label:score>=5?'Reliable':score>=3?'Review':'Insufficient',cls:score>=5?'ok':score>=3?'warn':'bad',issues};
 }
-function showUnplannedForm(){document.getElementById('unplannedForm').classList.toggle('hidden')}
-function unplannedForm(){
-  const opts=state.customers.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('');
-  return `<div class="card" style="box-shadow:none;margin-top:14px"><div class="form-row-3">
-    <div><label>${t('Customer','客户')}</label><select id="upCustomer">${opts}</select></div>
-    <div><label>${t('Purpose','拜访目的')}</label><select id="upPurpose"><option>Collection</option><option>Order</option><option>Product Introduction</option><option>Stock Check</option><option>Complaint</option><option>Price Discussion</option><option>Relationship Visit</option></select></div>
-    <div><label>${t('Reason for unplanned visit','临时拜访原因')}</label><input id="upReason"></div>
-  </div><div class="form-actions"><button class="btn btn-primary" onclick="startUnplanned()">${t('Start Now','立即开始')}</button></div></div>`
-}
-function startUnplanned(){
-  const customerId=document.getElementById('upCustomer').value;
-  const purpose=[document.getElementById('upPurpose').value];
-  const reason=document.getElementById('upReason').value.trim();
-  if(!reason){alert(t('Please enter a reason.','请输入临时拜访原因。'));return}
-  getLocation(loc=>{
-    state.visits.push({id:uid('v'),salesId:session.userId,customerId,date:todayISO(),planId:null,purpose,unplannedReason:reason,status:'active',startTime:new Date().toISOString(),startLat:loc.lat,startLng:loc.lng,startAccuracy:loc.accuracy});
-    save();renderApp();
-  });
-}
-function startVisit(planId,customerId){
-  const active=state.visits.find(v=>v.salesId===session.userId&&v.status==='active');
-  if(active){alert(t('Finish the current visit first.','请先结束当前拜访。'));return}
-  getLocation(loc=>{
-    const plan=state.plans.find(p=>p.id===planId);
-    state.visits.push({id:uid('v'),salesId:session.userId,customerId,date:todayISO(),planId,purpose:plan?.purpose||[],status:'active',startTime:new Date().toISOString(),startLat:loc.lat,startLng:loc.lng,startAccuracy:loc.accuracy});
-    save();renderApp();
-  });
-}
-function getLocation(cb){
-  if(!navigator.geolocation){cb({lat:null,lng:null,accuracy:null});return}
-  navigator.geolocation.getCurrentPosition(
-    p=>cb({lat:+p.coords.latitude.toFixed(6),lng:+p.coords.longitude.toFixed(6),accuracy:Math.round(p.coords.accuracy)}),
-    ()=>{alert(t('Location could not be obtained. The visit will be recorded without GPS.','无法获取定位，本次拜访将不带GPS记录。'));cb({lat:null,lng:null,accuracy:null})},
-    {enableHighAccuracy:true,timeout:10000,maximumAge:0}
-  )
-}
-function showFinish(id){document.getElementById('finish_'+id).classList.toggle('hidden')}
-function finishForm(id){
-  return `<div class="form-row">
-    <div><label>${t('Result','拜访结果')}</label><select id="res_${id}" multiple size="4"><option>Order</option><option>Collection</option><option>Product Demo</option><option>Complaint</option><option>Stock Check</option><option>Relationship</option></select></div>
-    <div><label>${t('Order Amount (USD)','订单金额（USD）')}</label><input type="number" min="0" step="0.01" id="order_${id}" value="0"></div>
-    <div><label>${t('Collection Amount (USD)','回款金额（USD）')}</label><input type="number" min="0" step="0.01" id="collection_${id}" value="0"></div>
-    <div><label>${t('Follow-up Required','需要跟进')}</label><select id="follow_${id}"><option value="no">${t('No','否')}</option><option value="yes">${t('Yes','是')}</option></select></div>
-  </div>
-  <div style="margin-top:10px"><label>${t('Remark','备注')}</label><textarea id="remark_${id}" placeholder="${t('Customer needs, price, supply, payment or next action...','客户需求、价格、供应、回款或下一步行动……')}"></textarea></div>
-  <div class="form-actions"><button class="btn btn-primary" onclick="finishVisit('${id}')">${t('Complete Visit','完成拜访')}</button></div>`
-}
-function finishVisit(id){
-  const v=state.visits.find(x=>x.id===id);
-  const sel=[...document.getElementById('res_'+id).selectedOptions].map(o=>o.value);
-  getLocation(loc=>{
-    Object.assign(v,{status:'completed',endTime:new Date().toISOString(),endLat:loc.lat,endLng:loc.lng,endAccuracy:loc.accuracy,results:sel,orderAmount:+document.getElementById('order_'+id).value||0,collectionAmount:+document.getElementById('collection_'+id).value||0,followUp:document.getElementById('follow_'+id).value==='yes',remark:document.getElementById('remark_'+id).value.trim()});
-    save();renderApp();
-  });
-}
-
-function salesPlan(){
-  const date=tomorrowISO();
-  const mine=state.plans.filter(p=>p.salesId===session.userId&&p.date===date).sort((a,b)=>a.seq-b.seq);
-  const opts=state.customers.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('');
-  return `<div class="card"><div class="hero"><div><h2>${t("Tomorrow's Plan","明日拜访计划")}</h2><p class="muted">${fmtDate(date)}</p></div><span class="status ${mine.length?'completed':'pending'}">${mine.length?t('Submitted','已提交'):t('Not Submitted','未提交')}</span></div>
-  <div class="form-row">
-    <div><label>${t('Customer','客户')}</label><select id="planCustomer">${opts}</select></div>
-    <div><label>${t('Expected Time','预计时间')}</label><input type="time" id="planTime" value="09:00"></div>
-    <div><label>${t('Purpose','目的')}</label><select id="planPurpose"><option>Collection</option><option>Order</option><option>Product Introduction</option><option>Stock Check</option><option>Complaint</option><option>Price Discussion</option><option>Relationship Visit</option></select></div>
-    <div style="display:flex;align-items:end"><button class="btn btn-primary" style="width:100%" onclick="addPlan()">${t('Add to Plan','加入计划')}</button></div>
-  </div>
-  <div style="margin-top:18px">${mine.length?`<table><thead><tr><th>#</th><th>${t('Customer','客户')}</th><th>${t('Time','时间')}</th><th>${t('Purpose','目的')}</th><th></th></tr></thead><tbody>${mine.map(p=>`<tr><td>${p.seq}</td><td>${esc(customerName(p.customerId))}</td><td>${p.expectedTime}</td><td>${p.purpose.map(esc).join(', ')}</td><td><button class="btn btn-danger btn-small" onclick="deletePlan('${p.id}')">${t('Delete','删除')}</button></td></tr>`).join('')}</tbody></table>`:`<div class="note warning">${t('No visits added yet.','尚未添加拜访计划。')}</div>`}</div></div>`;
-}
-function addPlan(){
-  const customerId=document.getElementById('planCustomer').value;
-  const expectedTime=document.getElementById('planTime').value;
-  const purpose=[document.getElementById('planPurpose').value];
-  const date=tomorrowISO();
-  const seq=state.plans.filter(p=>p.salesId===session.userId&&p.date===date).length+1;
-  state.plans.push({id:uid('p'),salesId:session.userId,customerId,date,expectedTime,purpose,seq,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()});
-  save();renderApp();
-}
-function deletePlan(id){state.plans=state.plans.filter(p=>p.id!==id);save();renderApp()}
-
 function salesHistory(){
-  const rows=state.visits.filter(v=>v.salesId===session.userId).sort((a,b)=>b.startTime.localeCompare(a.startTime));
-  return `<div class="card"><h2>${t('My Visit History','我的拜访历史')}</h2>${visitTable(rows)}</div>`;
+ const rows=state.visits.filter(v=>v.salesId===session.userId).sort((a,b)=>(b.startTime||'').localeCompare(a.startTime||''));
+ return `<div class="card"><h2>My Visit History</h2>${rows.length?rows.map(v=>`<div class="customer"><b>${esc(custById(v.customerId).name)}</b><div class="muted">${fmt(v.startTime)} · ${v.status}${v.status==='completed'?' · '+mins(v)+' min':''}</div></div>`).join(''):'<p class="muted">No records yet.</p>'}</div>`;
 }
-function managerDashboard(){
-  const today=todayISO();
-  const sales=state.users.filter(u=>u.role==='sales');
-  const plans=state.plans.filter(p=>p.date===today);
-  const visits=state.visits.filter(v=>v.date===today);
-  const completed=visits.filter(v=>v.status==='completed');
-  const active=visits.filter(v=>v.status==='active');
-  const totalOrder=completed.reduce((s,v)=>s+(v.orderAmount||0),0);
-  const totalCollection=completed.reduce((s,v)=>s+(v.collectionAmount||0),0);
-  const rows=sales.map(s=>{
-    const p=plans.filter(x=>x.salesId===s.id).length;
-    const v=completed.filter(x=>x.salesId===s.id).length;
-    const a=active.find(x=>x.salesId===s.id);
-    const rate=p?Math.round(v/p*100):0;
-    return `<tr><td>${esc(s.name)}</td><td>${p}</td><td>${v}</td><td>${a?esc(customerName(a.customerId)):t('No active visit','无进行中拜访')}</td><td><div class="progress"><span style="width:${Math.min(100,rate)}%"></span></div><small>${rate}%</small></td></tr>`
-  }).join('');
-  return `<div class="grid grid-4">
-    <div class="metric">${t('Planned Visits','计划拜访')}<b>${plans.length}</b></div>
-    <div class="metric">${t('Completed Visits','完成拜访')}<b>${completed.length}</b></div>
-    <div class="metric">${t('Orders (USD)','订单（USD）')}<b>${totalOrder.toFixed(2)}</b></div>
-    <div class="metric">${t('Collections (USD)','回款（USD）')}<b>${totalCollection.toFixed(2)}</b></div>
-  </div>
-  <div class="card"><h2>${t("Today's Execution","今日执行情况")}</h2><table><thead><tr><th>${t('Sales','销售')}</th><th>${t('Planned','计划')}</th><th>${t('Completed','完成')}</th><th>${t('Current Location','当前拜访')}</th><th>${t('Completion','完成率')}</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+function dashboard(){
+ const today=dateISO(), visits=state.visits.filter(v=>v.date===today),done=visits.filter(v=>v.status==='completed');
+ return `<div class="grid g4"><div class="metric">Pilot Sales<b>3</b></div><div class="metric">Visits Today<b>${visits.length}</b></div><div class="metric">Completed<b>${done.length}</b></div><div class="metric">Need Review<b>${done.filter(v=>evidence(v).label!=='Reliable').length}</b></div></div>
+ <div class="card"><h2>Today by Sales Representative</h2><table><thead><tr><th>Sales</th><th>Customers</th><th>Started</th><th>Completed</th><th>Reliable</th></tr></thead><tbody>${SALES.map(s=>{
+ const mine=visits.filter(v=>v.salesId===s.id),comp=mine.filter(v=>v.status==='completed');
+ return `<tr><td>${s.name}</td><td>${CUSTOMERS.filter(c=>c.salesId===s.id).length}</td><td>${mine.length}</td><td>${comp.length}</td><td>${comp.filter(v=>evidence(v).label==='Reliable').length}</td></tr>`}).join('')}</tbody></table></div>`;
 }
-function managerPlans(){
-  const date=tomorrowISO();
-  const sales=state.users.filter(u=>u.role==='sales');
-  return `<div class="card"><h2>${t("Tomorrow's Sales Plans","明日销售计划")}</h2><p class="muted">${fmtDate(date)}</p>
-  ${sales.map(s=>{
-    const ps=state.plans.filter(p=>p.salesId===s.id&&p.date===date).sort((a,b)=>a.seq-b.seq);
-    return `<div class="visit-card"><div class="visit-head"><h3>${esc(s.name)}</h3><span class="status ${ps.length?'completed':'pending'}">${ps.length?ps.length+' '+t('visits','个拜访'):t('Not submitted','未提交')}</span></div>
-    ${ps.length?`<table><thead><tr><th>#</th><th>${t('Customer','客户')}</th><th>${t('Time','时间')}</th><th>${t('Purpose','目的')}</th></tr></thead><tbody>${ps.map(p=>`<tr><td>${p.seq}</td><td>${esc(customerName(p.customerId))}</td><td>${p.expectedTime}</td><td>${p.purpose.map(esc).join(', ')}</td></tr>`).join('')}</tbody></table>`:''}</div>`
-  }).join('')}</div>`;
+function records(){
+ const rows=[...state.visits].sort((a,b)=>(b.startTime||'').localeCompare(a.startTime||''));
+ return `<div class="card"><h2>Visit Records</h2>${rows.length?`<table><thead><tr><th>Sales</th><th>Customer</th><th>Time</th><th>Duration</th><th>Evidence</th><th>Photo</th><th>Map</th></tr></thead><tbody>${rows.map(v=>{const ev=evidence(v);return `<tr><td>${salesById(v.salesId).name}</td><td>${esc(custById(v.customerId).name)}<br><span class="muted">${esc(v.result||'')}</span></td><td>${fmt(v.startTime)}<br>${fmt(v.endTime)}</td><td>${mins(v)} min</td><td><span class="badge ${ev.cls}">${ev.label}</span><br><small>${ev.issues.join(', ')}</small></td><td>${v.photo?`<img class="photo" src="${v.photo}">`:'-'}</td><td>${v.startGPS?`<a target="_blank" href="https://www.google.com/maps?q=${v.startGPS.lat},${v.startGPS.lng}">Open map</a><br><small>±${v.startGPS.accuracy}m</small>`:'-'}</td></tr>`}).join('')}</tbody></table>`:'<p class="muted">No records yet.</p>'}</div>`;
 }
-function managerRecords(){
-  const rows=[...state.visits].sort((a,b)=>(b.startTime||'').localeCompare(a.startTime||''));
-  return `<div class="card"><h2>${t('All Visit Records','全部拜访记录')}</h2>${visitTable(rows,true)}</div>`;
+function pilotData(){
+ return `<div class="card"><h2>Pilot Master Data</h2><p>3 sales representatives · 61 active customers</p><button class="btn secondary" onclick="exportData()">Export Pilot Records</button><button class="btn danger" style="margin-left:8px" onclick="resetPilot()">Reset Device Data</button><p class="muted" style="margin-top:12px">This device stores the current pilot records locally. Cloud synchronization is the next deployment step.</p></div>`;
 }
-function visitTable(rows,showSales=false){
-  if(!rows.length)return `<div class="note warning">${t('No visit records yet.','暂无拜访记录。')}</div>`;
-  return `<table><thead><tr>${showSales?`<th>${t('Sales','销售')}</th>`:''}<th>${t('Date','日期')}</th><th>${t('Customer','客户')}</th><th>${t('Status','状态')}</th><th>${t('Time','时间')}</th><th>${t('Duration','时长')}</th><th>${t('Order','订单')}</th><th>${t('Collection','回款')}</th><th>${t('Remark','备注')}</th></tr></thead><tbody>
-  ${rows.map(v=>`<tr>${showSales?`<td>${esc(userName(v.salesId))}</td>`:''}<td>${fmtDate(v.date)}</td><td>${esc(customerName(v.customerId))}</td><td><span class="status ${v.status==='active'?'activevisit':v.status}">${v.status}</span></td><td>${fmtTime(v.startTime)}–${fmtTime(v.endTime)}</td><td>${duration(v)}</td><td>${(v.orderAmount||0).toFixed(2)}</td><td>${(v.collectionAmount||0).toFixed(2)}</td><td>${esc(v.remark||'')}</td></tr>`).join('')}</tbody></table>`
-}
-function masterData(){
-  return `<div class="grid grid-2">
-    <div class="card"><h2>${t('Customers','客户资料')}</h2>
-      <div class="form-row-3"><div><label>${t('Name','名称')}</label><input id="custName"></div><div><label>${t('Address','地址')}</label><input id="custAddress"></div><div style="display:flex;align-items:end"><button class="btn btn-primary" onclick="addCustomer()">${t('Add Customer','添加客户')}</button></div></div>
-      <table style="margin-top:14px"><thead><tr><th>${t('Customer','客户')}</th><th>${t('Address','地址')}</th><th></th></tr></thead><tbody>${state.customers.map(c=>`<tr><td>${esc(c.name)}</td><td>${esc(c.address)}</td><td><button class="btn btn-danger btn-small" onclick="deleteCustomer('${c.id}')">${t('Delete','删除')}</button></td></tr>`).join('')}</tbody></table>
-    </div>
-    <div class="card"><h2>${t('Sales Representatives','销售代表')}</h2>
-      <div class="form-row-3"><div><label>${t('Name','姓名')}</label><input id="salesName"></div><div></div><div style="display:flex;align-items:end"><button class="btn btn-primary" onclick="addSales()">${t('Add Sales Rep','添加销售')}</button></div></div>
-      <table style="margin-top:14px"><thead><tr><th>${t('Name','姓名')}</th><th></th></tr></thead><tbody>${state.users.filter(u=>u.role==='sales').map(u=>`<tr><td>${esc(u.name)}</td><td><button class="btn btn-danger btn-small" onclick="deleteSales('${u.id}')">${t('Delete','删除')}</button></td></tr>`).join('')}</tbody></table>
-    </div>
-  </div>`;
-}
-function addCustomer(){const name=document.getElementById('custName').value.trim();if(!name)return;state.customers.push({id:uid('c'),name,address:document.getElementById('custAddress').value.trim(),lat:null,lng:null});save();renderApp()}
-function deleteCustomer(id){if(state.plans.some(p=>p.customerId===id)||state.visits.some(v=>v.customerId===id)){alert(t('This customer already has records and cannot be deleted.','该客户已有记录，无法删除。'));return}state.customers=state.customers.filter(c=>c.id!==id);save();renderApp()}
-function addSales(){const name=document.getElementById('salesName').value.trim();if(!name)return;state.users.push({id:uid('s'),name,role:'sales'});save();renderApp()}
-function deleteSales(id){if(state.plans.some(p=>p.salesId===id)||state.visits.some(v=>v.salesId===id)){alert(t('This sales representative already has records and cannot be deleted.','该销售已有记录，无法删除。'));return}state.users=state.users.filter(u=>u.id!==id);save();renderApp()}
-
-function exportData(){
-  const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='sales_visit_tracker_data_'+todayISO()+'.json';a.click();URL.revokeObjectURL(a.href);
-}
-function importData(e){
-  const f=e.target.files[0];if(!f)return;
-  const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!d.users||!d.customers||!d.plans||!d.visits)throw Error();state=d;save();alert(t('Data imported successfully.','数据导入成功。'));renderApp()}catch(err){alert(t('Invalid data file.','数据文件无效。'))}};r.readAsText(f);
-}
-refreshUserOptions();
-renderSalesLoginButtons();
-applyLanguage();
-if(session){activeTab=session.role==='sales'?'today':'dashboard';renderApp()}
+function exportData(){const blob=new Blob([JSON.stringify({exportedAt:nowISO(),sales:SALES,customers:CUSTOMERS,state},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='SVT_Pilot_'+dateISO()+'.json';a.click();URL.revokeObjectURL(a.href)}
+function resetPilot(){if(confirm('Delete all visit records on this device?')){state=seed();save();render()}}
+initLogin();if(session){tab=session.role==='sales'?'customers':'dashboard';render()}
 </script>
 </body>
 </html>

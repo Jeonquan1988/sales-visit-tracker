@@ -1,167 +1,78 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0f5bd8">
-<title>Sales Visit Tracker V1.2</title>
+<title>Sales Visit Tracker V1.3 Cloud</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{--blue:#0f5bd8;--blue2:#eaf2ff;--ink:#172033;--muted:#667085;--line:#dfe5ef;--bg:#f5f7fb;--green:#14804a;--orange:#b54708;--red:#b42318}
-*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--ink)}button,input,select,textarea{font:inherit}button{cursor:pointer}
-header{position:sticky;top:0;z-index:10;background:white;border-bottom:1px solid var(--line);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
-.brand{font-weight:800}.version{color:var(--muted);font-size:12px}main{max-width:1180px;margin:auto;padding:16px}.card{background:white;border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px;box-shadow:0 8px 24px rgba(16,24,40,.06)}
-.grid{display:grid;gap:12px}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}.btn{border:0;border-radius:12px;padding:12px 14px;font-weight:800}.primary{background:var(--blue);color:white}.secondary{background:var(--blue2);color:var(--blue)}.danger{background:#fee4e2;color:var(--red)}.ghost{background:white;border:1px solid var(--line)}
-.big{min-height:58px;font-size:17px;width:100%}.hidden{display:none!important}.muted{color:var(--muted)}.metric{padding:14px;border:1px solid var(--line);border-radius:14px;background:white}.metric b{display:block;font-size:26px;margin-top:6px}
-.customer{border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:10px}.row{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.badge{display:inline-block;padding:5px 9px;border-radius:999px;font-size:12px;font-weight:800}.ok{background:#e7f6ec;color:var(--green)}.warn{background:#fff4e5;color:var(--orange)}.bad{background:#fee4e2;color:var(--red)}.active{background:var(--blue2);color:var(--blue)}label{display:block;font-size:13px;font-weight:800;margin:10px 0 6px}input,select,textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:11px;background:white}textarea{min-height:82px}
-.tabs{display:flex;gap:8px;overflow:auto;margin-bottom:14px}.tab{white-space:nowrap;border:1px solid var(--line);background:white;padding:10px 12px;border-radius:999px}.tab.on{background:var(--blue);color:white}
-table{width:100%;border-collapse:collapse}th,td{padding:10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{font-size:12px;color:var(--muted)}img.photo{width:90px;height:70px;object-fit:cover;border-radius:8px;border:1px solid var(--line)}.notice{padding:12px;border-radius:12px;background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;margin-bottom:12px}
-progress{width:100%}
-@media(max-width:760px){main{padding:10px}.g3,.g4{grid-template-columns:1fr}header{position:static}table{display:block;overflow:auto}.desktop-only{display:none}.customer .row{flex-direction:column}}
+:root{--blue:#0f5bd8;--blue2:#eaf2ff;--ink:#172033;--muted:#667085;--line:#dfe5ef;--bg:#f5f7fb;--green:#14804a;--orange:#b54708;--red:#b42318}*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:var(--ink)}button,input,select,textarea{font:inherit}button{cursor:pointer}header{background:#fff;border-bottom:1px solid var(--line);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10}.brand{font-weight:800}.version{font-size:12px;color:var(--muted)}main{max-width:1120px;margin:auto;padding:14px}.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px;box-shadow:0 8px 24px rgba(16,24,40,.06)}.grid{display:grid;gap:12px}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}.row{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.btn{border:0;border-radius:12px;padding:12px 14px;font-weight:800}.primary{background:var(--blue);color:#fff}.secondary{background:var(--blue2);color:var(--blue)}.ghost{background:#fff;border:1px solid var(--line)}.danger{background:#fee4e2;color:var(--red)}.big{min-height:58px;font-size:17px;width:100%}.hidden{display:none!important}.muted{color:var(--muted)}.notice{padding:12px;border-radius:12px;background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;margin-bottom:12px}.success{background:#e7f6ec;border-color:#b7e4c7;color:var(--green)}.metric{padding:14px;border:1px solid var(--line);border-radius:14px}.metric b{display:block;font-size:26px;margin-top:6px}.customer{border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:10px}.badge{display:inline-block;padding:5px 9px;border-radius:999px;font-size:12px;font-weight:800}.ok{background:#e7f6ec;color:var(--green)}.warn{background:#fff4e5;color:var(--orange)}.bad{background:#fee4e2;color:var(--red)}.active{background:var(--blue2);color:var(--blue)}label{display:block;font-size:13px;font-weight:800;margin:10px 0 6px}input,select,textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:11px;background:#fff}textarea{min-height:82px}.tabs{display:flex;gap:8px;overflow:auto;margin-bottom:14px}.tab{white-space:nowrap;border:1px solid var(--line);background:#fff;padding:10px 12px;border-radius:999px}.tab.on{background:var(--blue);color:#fff}table{width:100%;border-collapse:collapse}th,td{padding:10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{font-size:12px;color:var(--muted)}img.photo{width:100px;height:76px;object-fit:cover;border-radius:8px;border:1px solid var(--line)}a{color:var(--blue)}#loading{position:fixed;inset:0;background:rgba(255,255,255,.88);display:grid;place-items:center;z-index:50;font-weight:800}.spinner{width:32px;height:32px;border:4px solid var(--line);border-top-color:var(--blue);border-radius:50%;animation:s 1s linear infinite;margin:auto auto 10px}@keyframes s{to{transform:rotate(360deg)}}@media(max-width:760px){main{padding:10px}.g3,.g4{grid-template-columns:1fr}.row{flex-direction:column}table{display:block;overflow:auto}.customer .btn{width:100%;min-height:52px}header{position:static}}
 </style>
 </head>
 <body>
-<header><div><div class="brand">Sales Visit Tracker</div><div class="version">V1.2 Pilot</div></div><button class="btn ghost" id="logoutBtn" onclick="logout()" style="display:none">Logout</button></header>
+<div id="loading"><div><div class="spinner"></div><div id="loadingText">Connecting to cloud…</div></div></div>
+<header><div><div class="brand">Sales Visit Tracker</div><div class="version">V1.3 Cloud Pilot</div></div><button id="logoutBtn" class="btn ghost hidden" onclick="logout()">Logout</button></header>
 <main>
 <section id="loginView">
-<div class="card">
-<h1>Sales Login</h1><p class="muted">Choose your name to open your mobile workspace.</p>
-<div class="grid g3" id="salesButtons"></div>
-</div>
-<div class="card">
-<h2>Management Login</h2>
-<div class="grid g3">
-<select id="managerRole"><option value="director">Sales Director</option><option value="boss">Boss</option></select>
-<input id="managerPin" type="password" inputmode="numeric" placeholder="Pilot PIN">
-<button class="btn primary" onclick="managerLogin()">Enter Dashboard</button>
-</div>
-<p class="muted" style="margin-top:10px">Pilot PIN: Sales Director 2468 · Boss 1357</p>
-</div>
+<div class="card"><h1>Sales Login</h1><p class="muted">Tap your name to open your customer list.</p><div id="salesButtons" class="grid g3"></div></div>
+<div class="card"><h2>Management Login</h2><div class="grid g3"><select id="managerRole"><option value="director">Sales Director</option><option value="boss">Boss</option></select><input id="managerPin" type="password" inputmode="numeric" placeholder="Pilot PIN"><button class="btn primary" onclick="managerLogin()">Enter Dashboard</button></div><p class="muted">Sales Director PIN: 2468 · Boss PIN: 1357</p></div>
+<div id="cloudStatus" class="notice success">Cloud connected</div>
 </section>
-
-<section id="appView" class="hidden">
-<div class="card"><div class="row"><div><h1 id="welcome"></h1><div class="muted" id="todayText"></div></div><span class="badge active" id="roleBadge"></span></div></div>
-<div class="tabs" id="tabs"></div>
-<div id="content"></div>
-</section>
+<section id="appView" class="hidden"><div class="card"><div class="row"><div><h1 id="welcome"></h1><div id="todayText" class="muted"></div></div><span id="roleBadge" class="badge active"></span></div></div><div id="tabs" class="tabs"></div><div id="content"></div></section>
 </main>
-
 <script>
-const SALES=[{"id": "SAL-0001", "name": "Tadiwa", "mobile": "+263781156751", "role": "sales"}, {"id": "SAL-0002", "name": "Faith", "mobile": "+263772424393", "role": "sales"}, {"id": "SAL-0003", "name": "Lindiwe", "mobile": "+263775424364", "role": "sales"}];
-const CUSTOMERS=[{"id": "CUS-0001", "name": "Yarbort", "salesName": "Tadiwa", "region": "Harare", "area": "Highglen", "address": "21c Highglen Shopping Centre, Harare", "mobile": "+263786256359", "status": "Active"}, {"id": "CUS-0002", "name": "Spar Montagu", "salesName": "Tadiwa", "region": "Harare", "area": "Montagu", "address": "Montagu Shopping Center Five Ave, Harare", "mobile": "+263719726667", "status": "Active"}, {"id": "CUS-0003", "name": "Thatcher", "salesName": "Tadiwa", "region": "Harare", "area": "Chishawasha", "address": "1167 Chishawasha Hills, Harare", "mobile": "+263775506877", "status": "Active"}, {"id": "CUS-0004", "name": "Streams of Life", "salesName": "Tadiwa", "region": "Harare", "area": "Hatfield", "address": "12099 Hatfield 122 Crescent, Harare", "mobile": "+263779514863", "status": "Active"}, {"id": "CUS-0005", "name": "Fugawo Investment", "salesName": "Tadiwa", "region": "Norton", "area": "Norton", "address": "Shop 1306 Ngoni shops, Norton", "mobile": "+263772294486", "status": "Active"}, {"id": "CUS-0006", "name": "Lomuc Bookshop", "salesName": "Tadiwa", "region": "Norton", "area": "Norton", "address": "2019 LC Complex Katanga, Norton", "mobile": "+263776077382", "status": "Active"}, {"id": "CUS-0007", "name": "TM Ribbon Supplies", "salesName": "Tadiwa", "region": "Harare", "area": "Graniteside", "address": "Shop no.5 Kelvin Corner Graniteside, Harare", "mobile": "+263773419763", "status": "Active"}, {"id": "CUS-0008", "name": "Tera Twist Stationery", "salesName": "Tadiwa", "region": "Norton", "area": "Norton", "address": "2017 LC Complex Katanga, Norton", "mobile": "+263784501214", "status": "Active"}, {"id": "CUS-0009", "name": "Tapfuma Trading", "salesName": "Tadiwa", "region": "Harare", "area": "Dziwarasekwa", "address": "3446 Dziwarasekwa 2 shops, Harare", "mobile": "+263771233814", "status": "Active"}, {"id": "CUS-0010", "name": "Space Wax", "salesName": "Tadiwa", "region": "Harare", "area": "Highglen", "address": "Shop 46 Highglen shopping Center, Harare", "mobile": "+263779864945", "status": "Active"}, {"id": "CUS-0011", "name": "Tanja", "salesName": "Tadiwa", "region": "Harare", "area": "Harare", "address": "21 Corner Nelson and Leopord Takawira, Harare", "mobile": "+263772394480", "status": "Active"}, {"id": "CUS-0012", "name": "PnP Joina Center", "salesName": "Tadiwa", "region": "Harare", "area": "Harare", "address": "Joiner Center Corner Jason Moyo and Julius Nyerere", "mobile": "+263719073141", "status": "Active"}, {"id": "CUS-0013", "name": "Century Computers", "salesName": "Faith", "region": "Kwekwe", "area": "Kwekwe", "address": "Shop 4, CAIPF Building, Railway rd, Kwekwe", "mobile": "+263772101138", "status": "Active"}, {"id": "CUS-0014", "name": "Colours Stationery", "salesName": "Faith", "region": "Harare", "area": "Highlands", "address": "1 Montgomery Rd, Highlands", "mobile": "+263773329944", "status": "Active"}, {"id": "CUS-0015", "name": "St One Pvt Ltd", "salesName": "Faith", "region": "Harare", "area": "Highlands", "address": "41 Glenara Avenue, Highlands", "mobile": "+263783410771", "status": "Active"}, {"id": "CUS-0016", "name": "TV Sales and Hire", "salesName": "Faith", "region": "Harare", "area": "First St", "address": "Edward Building, First St", "mobile": "+263773382298", "status": "Active"}, {"id": "CUS-0017", "name": "KM Creative", "salesName": "Faith", "region": "Harare", "area": "Kamfinsa", "address": "Shop 3, The Hub Mall, Kamfinsa", "mobile": "+263773614518", "status": "Active"}, {"id": "CUS-0018", "name": "Chalmon", "salesName": "Faith", "region": "Harare", "area": "Office 217", "address": "Gelfand House, 1st/Speke, Office 217", "mobile": "+263772289852", "status": "Active"}, {"id": "CUS-0019", "name": "Power Speed", "salesName": "Faith", "region": "Harare", "area": "Graniteside", "address": "Gate 1 Powerspeed Complex, Graniteside", "mobile": "+263735235874", "status": "Active"}, {"id": "CUS-0020", "name": "Scripted Stationery", "salesName": "Faith", "region": "Harare", "area": "Harare", "address": "16 Greendale Ave, Harare", "mobile": "+263772218165", "status": "Active"}, {"id": "CUS-0021", "name": "Metrosol Pvt Ltd", "salesName": "Faith", "region": "Harare", "area": "Newlands", "address": "Shop 4 CBZ Corner, Newlands", "mobile": "+263774828514", "status": "Active"}, {"id": "CUS-0022", "name": "Snowvave investments", "salesName": "Faith", "region": "Harare", "area": "Waterfalls", "address": "87 Chiltern Rd, Waterfalls", "mobile": "+263773120558", "status": "Active"}, {"id": "CUS-0023", "name": "Appliance Experts", "salesName": "Faith", "region": "Harare", "area": "Harare", "address": "85 Nelson Mandela Ave, Harare", "mobile": "+263772355743", "status": "Active"}, {"id": "CUS-0024", "name": "Squiggles Bookstore", "salesName": "Faith", "region": "Harare", "area": "Mt Pleasant", "address": "Shop No 4, CABS House, Bond St, Mt Pleasant", "mobile": "+263772940503", "status": "Active"}, {"id": "CUS-0025", "name": "Connexional Bookshop", "salesName": "Faith", "region": "Harare", "area": "Harare", "address": "7 Central Ave, Harare", "mobile": "+263772757561", "status": "Active"}, {"id": "CUS-0026", "name": "Thompsons Bookshop", "salesName": "Faith", "region": "Harare", "area": "Borrowdale", "address": "Shop 88 Sam Levy's Village, Borrowdale", "mobile": "+263772324199", "status": "Active"}, {"id": "CUS-0027", "name": "Bhola", "salesName": "Faith", "region": "Harare", "area": "Msasa", "address": "7 Kingsdale Walk, Msasa", "mobile": "+263773217124", "status": "Active"}, {"id": "CUS-0028", "name": "Tammy", "salesName": "Faith", "region": "Harare", "area": "Belvedere", "address": "37 Princess Rd, Belvedere", "mobile": "+263775346868", "status": "Active"}, {"id": "CUS-0029", "name": "Typocrafters", "salesName": "Faith", "region": "Harare", "area": "Cnr George/Sam Nujoma", "address": "Herald House, Cnr George/Sam Nujoma", "mobile": "+263777093917", "status": "Active"}, {"id": "CUS-0030", "name": "Polymaster Packaging", "salesName": "Lindiwe", "region": "Harare", "area": "Harare", "address": "13634 Sebbasa Park", "mobile": "+263773599292", "status": "Active"}, {"id": "CUS-0031", "name": "Top Class Supermarket", "salesName": "Lindiwe", "region": "Harare", "area": "Mabvuku", "address": "21 Ndindindi Street old Tafara", "mobile": "+263774796516", "status": "Active"}, {"id": "CUS-0032", "name": "Cyberweb Investments", "salesName": "Lindiwe", "region": "Harare", "area": "Harare", "address": "49 George Silundika", "mobile": "+263774054556", "status": "Active"}, {"id": "CUS-0033", "name": "Tichbay", "salesName": "Lindiwe", "region": "Harare", "area": "Harare", "address": "Suite 201 sec floor Labos Hs R Manyika", "mobile": "+263776400618", "status": "Active"}, {"id": "CUS-0034", "name": "Julian", "salesName": "Lindiwe", "region": "Harare", "area": "Newlands", "address": "105 Newland", "mobile": "+263779945256", "status": "Active"}, {"id": "CUS-0035", "name": "Munamati Stationery", "salesName": "Lindiwe", "region": "Harare", "area": "Mabvuku", "address": "101 Kamunhu Shopping Centre", "mobile": "+263776630843", "status": "Active"}, {"id": "CUS-0036", "name": "Tafsight Bookshop", "salesName": "Lindiwe", "region": "Harare", "area": "Harare", "address": "49 Speke Avenue", "mobile": "+263772562804", "status": "Active"}, {"id": "CUS-0037", "name": "Ruwa Stationery t/a Maha Stationery", "salesName": "Lindiwe", "region": "Harare", "area": "Ruwa", "address": "Munondo Rd Maha Complex", "mobile": "+263780192084", "status": "Active"}, {"id": "CUS-0038", "name": "Mutenure", "salesName": "Lindiwe", "region": "Harare", "area": "Harare", "address": "101 Munondo Ruwa", "mobile": "+263712519574", "status": "Active"}, {"id": "CUS-0039", "name": "Lilys", "salesName": "Lindiwe", "region": "Harare", "area": "Harare", "address": "14531 Musasa Damafalls", "mobile": "+263773255323", "status": "Active"}, {"id": "CUS-0040", "name": "Matsika Investments", "salesName": "Lindiwe", "region": "Harare", "area": "Harare", "address": "09 Robson Manyika Harare", "mobile": "+263772550869", "status": "Active"}, {"id": "CUS-0041", "name": "Mai Chiedza", "salesName": "Lindiwe", "region": "Harare", "area": "Harare", "address": "346 Rezende Harare", "mobile": "+263777597984", "status": "Active"}, {"id": "CUS-0042", "name": "Mr Banda", "salesName": "Lindiwe", "region": "Harare", "area": "Mabvuku", "address": "102 Kamunhu Shopping Centre", "mobile": "+263772487849", "status": "Active"}, {"id": "CUS-0043", "name": "Burnishford Enterprise", "salesName": "Lindiwe", "region": "Harare", "area": "Harare", "address": "32 Jason Moyo", "mobile": "+263772780617", "status": "Active"}, {"id": "CUS-0044", "name": "Best Books", "salesName": "Lindiwe", "region": "Harare", "area": "Harare", "address": "54 Three Anchor House Jason Moyo", "mobile": "+263775434466", "status": "Active"}, {"id": "CUS-0045", "name": "Cybrex/Athlone mart", "salesName": "Lindiwe", "region": "Harare", "area": "Athlone", "address": "7072 Greengrove Rd Athlone Park", "mobile": "+263773014292", "status": "Active"}, {"id": "CUS-0046", "name": "Treasure times", "salesName": "Lindiwe", "region": "Harare", "area": "Harare", "address": "Shop2 parkade samora machael", "mobile": "+263773924104", "status": "Active"}, {"id": "CUS-0047", "name": "Legacy", "salesName": "Lindiwe", "region": "Harare", "area": "Ruwa", "address": "292 Chihombe rd ruwa", "mobile": "+263772329076", "status": "Active"}, {"id": "CUS-0048", "name": "Chidemo", "salesName": "Lindiwe", "region": "Kadoma", "area": "Kadoma", "address": "277 Sarudzai shopping centre kadomo", "mobile": "+263775731895", "status": "Active"}, {"id": "CUS-0049", "name": "Blessed", "salesName": "Lindiwe", "region": "Harare", "area": "Harare", "address": "54 Rezende Containers", "mobile": "+263775155333", "status": "Active"}, {"id": "CUS-0050", "name": "Classic Smkt", "salesName": "Lindiwe", "region": "Harare", "area": "Budiriro", "address": "Shop 15 Budiriro 4 complex", "mobile": "+263772325468", "status": "Active"}, {"id": "CUS-0051", "name": "Lifestyle Bookshop", "salesName": "Lindiwe", "region": "Harare", "area": "Harare", "address": "29 Eastgate mall", "mobile": "+263784535931", "status": "Active"}, {"id": "CUS-0052", "name": "Chase Stationery", "salesName": "Lindiwe", "region": "Harare", "area": "Harare", "address": "23 Kaymar flats", "mobile": "+263776881282", "status": "Active"}, {"id": "CUS-0053", "name": "Copyrise Pvt Ltd", "salesName": "Lindiwe", "region": "Harare", "area": "Harare", "address": "1Trogmonton cnr Julius and Samora", "mobile": "+263776059672", "status": "Active"}, {"id": "CUS-0054", "name": "Clamount", "salesName": "Lindiwe", "region": "Harare", "area": "Harare", "address": "30C Julius nyerere", "mobile": "+263777524643", "status": "Active"}, {"id": "CUS-0055", "name": "Stationery Kings", "salesName": "Lindiwe", "region": "Harare", "area": "Harare", "address": "19 Robson Manyika street", "mobile": "+263772490690", "status": "Active"}, {"id": "CUS-0056", "name": "Revel eland", "salesName": "Lindiwe", "region": "Harare", "area": "Ruwa", "address": "2610 Herbert Chitepo ruwa", "mobile": "+263777950278", "status": "Active"}, {"id": "CUS-0057", "name": "Uporon", "salesName": "Lindiwe", "region": "Harare", "area": "Marondera", "address": "41 EML Street Marondera", "mobile": "+263773095148", "status": "Active"}, {"id": "CUS-0058", "name": "Mai Shekaina", "salesName": "Lindiwe", "region": "Harare", "area": "Harare", "address": "50 Rezende TN MALL", "mobile": "+263775071782", "status": "Active"}, {"id": "CUS-0059", "name": "sewere", "salesName": "Lindiwe", "region": "Harare", "area": "Harare", "address": "3 Rezende container", "mobile": "+263779381463", "status": "Active"}, {"id": "CUS-0060", "name": "Bookshop Gazebo", "salesName": "Lindiwe", "region": "Harare", "area": "Mabvuku", "address": "10 bookshop gazebo", "mobile": "+263772771804", "status": "Active"}, {"id": "CUS-0061", "name": "You Save", "salesName": "Lindiwe", "region": "Harare", "area": "Ruwa", "address": "101 George complex ruwa", "mobile": "+263719581398", "status": "Active"}].map(c=>({...c,salesId:SALES.find(s=>s.name===c.salesName)?.id}));
-const KEY='svt_v12_data',SESSION='svt_v12_session';
-let state=load(), session=JSON.parse(localStorage.getItem(SESSION)||'null'), tab='';
-
-function seed(){return {visits:[],customerLocations:{}}}
-function load(){try{return Object.assign(seed(),JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){return seed()}}
-function save(){localStorage.setItem(KEY,JSON.stringify(state))}
-function uid(){return 'VIS-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,6)}
-function esc(s=''){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
-function nowISO(){return new Date().toISOString()}
-function dateISO(d=new Date()){return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10)}
-function fmt(dt){return dt?new Date(dt).toLocaleString('en-GB',{dateStyle:'medium',timeStyle:'short'}):'-'}
-function mins(v){return v.endTime?Math.max(0,Math.round((new Date(v.endTime)-new Date(v.startTime))/60000)):0}
-function salesById(id){return SALES.find(s=>s.id===id)}
-function custById(id){return CUSTOMERS.find(c=>c.id===id)}
-
-function initLogin(){
- document.getElementById('salesButtons').innerHTML=SALES.map(s=>`<button class="btn secondary big" onclick="salesLogin('${s.id}')">${esc(s.name)}</button>`).join('');
-}
-function salesLogin(id){session={role:'sales',userId:id};localStorage.setItem(SESSION,JSON.stringify(session));tab='customers';render()}
-function managerLogin(){
- const role=document.getElementById('managerRole').value,pin=document.getElementById('managerPin').value;
- if((role==='director'&&pin!=='2468')||(role==='boss'&&pin!=='1357'))return alert('Incorrect PIN');
- session={role,userId:role};localStorage.setItem(SESSION,JSON.stringify(session));tab='dashboard';render();
-}
-function logout(){localStorage.removeItem(SESSION);session=null;document.getElementById('appView').classList.add('hidden');document.getElementById('loginView').classList.remove('hidden');document.getElementById('logoutBtn').style.display='none'}
-function render(){
- if(!session)return;
- document.getElementById('loginView').classList.add('hidden');document.getElementById('appView').classList.remove('hidden');document.getElementById('logoutBtn').style.display='block';
- const u=session.role==='sales'?salesById(session.userId):{name:session.role==='boss'?'Boss':'Sales Director'};
- document.getElementById('welcome').textContent='Welcome, '+u.name;
- document.getElementById('todayText').textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
- document.getElementById('roleBadge').textContent=session.role==='sales'?'Sales Representative':session.role==='boss'?'Boss':'Sales Director';
- const defs=session.role==='sales'?[['customers','My Customers'],['active','Active Visit'],['history','My History']]:[['dashboard','Today Dashboard'],['records','Visit Records'],['data','Pilot Data']];
- document.getElementById('tabs').innerHTML=defs.map(x=>`<button class="tab ${tab===x[0]?'on':''}" onclick="tab='${x[0]}';render()">${x[1]}</button>`).join('');
- document.getElementById('content').innerHTML=session.role==='sales'?(tab==='customers'?salesCustomers():tab==='active'?activeVisitView():salesHistory()):(tab==='dashboard'?dashboard():tab==='records'?records():pilotData());
-}
-function myCustomers(){return CUSTOMERS.filter(c=>c.salesId===session.userId)}
-function salesCustomers(){
- const active=state.visits.find(v=>v.salesId===session.userId&&v.status==='active');
- return `<div class="card"><h2>My Active Customers</h2><p class="muted">${myCustomers().length} customers assigned for the pilot.</p>
- ${active?`<div class="notice">You already have an active visit at <b>${esc(custById(active.customerId).name)}</b>. Finish it before starting another.</div>`:''}
- ${myCustomers().map(c=>`<div class="customer"><div class="row"><div><h3>${esc(c.name)}</h3><div class="muted">${esc(c.address)}</div><div class="muted">${esc(c.mobile||'')}</div></div><button class="btn primary big" ${active?'disabled':''} onclick="startVisit('${c.id}')">Start Visit</button></div></div>`).join('')}</div>`;
-}
-function getGPS(){
- return new Promise((resolve,reject)=>{
-  if(!navigator.geolocation)return reject(new Error('GPS is not supported on this device.'));
-  navigator.geolocation.getCurrentPosition(p=>resolve({lat:+p.coords.latitude.toFixed(6),lng:+p.coords.longitude.toFixed(6),accuracy:Math.round(p.coords.accuracy)}),e=>reject(new Error('GPS permission is required to start or finish a visit.')),{enableHighAccuracy:true,timeout:20000,maximumAge:0});
- });
-}
-async function startVisit(customerId){
- if(state.visits.some(v=>v.salesId===session.userId&&v.status==='active'))return alert('Finish the current visit first.');
+const SUPABASE_URL='https://lamkjftrsceczhgmfyi.supabase.co';
+const SUPABASE_KEY='sb_publishable_fYuxNsIp5PGM2seLzcHDhA_ce3BUae9';
+const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const SESSION_KEY='svt_v13_session';
+let employees=[],customers=[],visits=[],session=JSON.parse(localStorage.getItem(SESSION_KEY)||'null'),tab='',photoFile=null;
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const dateISO=(d=new Date())=>new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10);
+const fmt=d=>d?new Date(d).toLocaleString('en-GB',{dateStyle:'medium',timeStyle:'short'}):'-';
+const mins=v=>v.end_time?Math.max(0,Math.round((new Date(v.end_time)-new Date(v.start_time))/60000)):0;
+const employee=id=>employees.find(x=>x.id===id)||{};
+const customer=id=>customers.find(x=>x.id===id)||{};
+function busy(on,text='Working…'){$('loadingText').textContent=text;$('loading').classList.toggle('hidden',!on)}
+function showError(error){console.error(error);alert(error?.message||String(error))}
+async function loadCloud(){
+ busy(true,'Connecting to cloud…');
  try{
-  const gps=await getGPS();
-  state.visits.push({id:uid(),salesId:session.userId,customerId,status:'active',date:dateISO(),startTime:nowISO(),startGPS:gps,photo:null,result:null,remark:'',endTime:null,endGPS:null});
-  save();tab='active';render();
- }catch(e){alert(e.message)}
+  const [e,c,v]=await Promise.all([
+   db.from('employees').select('*').order('full_name'),
+   db.from('customers').select('*').order('customer_name'),
+   db.from('visits').select('*').order('start_time',{ascending:false})
+  ]);
+  if(e.error)throw e.error;if(c.error)throw c.error;if(v.error)throw v.error;
+  employees=e.data||[];customers=c.data||[];visits=v.data||[];
+  renderLogin();if(session){tab=session.role==='sales'?'customers':'dashboard';render()}
+ }catch(err){$('cloudStatus').className='notice';$('cloudStatus').textContent='Cloud connection failed: '+err.message;showError(err)}finally{busy(false)}
 }
-function activeVisitView(){
- const v=state.visits.find(v=>v.salesId===session.userId&&v.status==='active');
- if(!v)return `<div class="card"><h2>No Active Visit</h2><p class="muted">Start a visit from My Customers.</p></div>`;
- const c=custById(v.customerId);
- return `<div class="card"><h2>${esc(c.name)}</h2><p class="muted">${esc(c.address)}</p><div class="badge active">Started ${fmt(v.startTime)}</div>
- <label>Take a live site photo</label><input id="photoInput" type="file" accept="image/*" capture="environment" onchange="previewPhoto(event)">
- <div id="photoPreview">${v.photo?`<img class="photo" src="${v.photo}">`:''}</div>
- <label>Visit result</label><select id="result"><option value="">Select result</option><option>Order Taken</option><option>No Order</option><option>Need Follow-up</option><option>Customer Closed</option><option>Payment Collected</option></select>
- <label>Remark</label><textarea id="remark" placeholder="Key customer feedback or next action"></textarea>
- <button class="btn primary big" style="margin-top:14px" onclick="finishVisit('${v.id}')">Finish Visit</button></div>`;
-}
-function previewPhoto(e){
- const f=e.target.files[0];if(!f)return;
- if(f.size>8*1024*1024){alert('Photo is too large. Please retake at a lower resolution.');e.target.value='';return}
- const r=new FileReader();r.onload=()=>{document.getElementById('photoPreview').innerHTML=`<img class="photo" src="${r.result}">`;document.getElementById('photoPreview').dataset.photo=r.result};r.readAsDataURL(f);
-}
-async function finishVisit(id){
- const v=state.visits.find(x=>x.id===id),result=document.getElementById('result').value,photo=document.getElementById('photoPreview').dataset.photo||v.photo;
- if(!photo)return alert('A live site photo is required.');
- if(!result)return alert('Select a visit result.');
- try{
-  const gps=await getGPS();
-  Object.assign(v,{status:'completed',endTime:nowISO(),endGPS:gps,photo,result,remark:document.getElementById('remark').value.trim()});
-  if(!state.customerLocations[v.customerId])state.customerLocations[v.customerId]={lat:v.startGPS.lat,lng:v.startGPS.lng,accuracy:v.startGPS.accuracy,sourceVisitId:v.id,confirmed:false};
-  save();tab='history';render();
- }catch(e){alert(e.message)}
-}
-function evidence(v){
- let score=0,issues=[];
- if(v.startGPS)score++;else issues.push('No start GPS');
- if(v.endGPS)score++;else issues.push('No end GPS');
- if(v.photo)score++;else issues.push('No photo');
- if(mins(v)>=2)score++;else issues.push('Very short visit');
- if(v.startGPS&&v.startGPS.accuracy<=100)score++;else issues.push('Low GPS accuracy');
- return {label:score>=5?'Reliable':score>=3?'Review':'Insufficient',cls:score>=5?'ok':score>=3?'warn':'bad',issues};
-}
-function salesHistory(){
- const rows=state.visits.filter(v=>v.salesId===session.userId).sort((a,b)=>(b.startTime||'').localeCompare(a.startTime||''));
- return `<div class="card"><h2>My Visit History</h2>${rows.length?rows.map(v=>`<div class="customer"><b>${esc(custById(v.customerId).name)}</b><div class="muted">${fmt(v.startTime)} · ${v.status}${v.status==='completed'?' · '+mins(v)+' min':''}</div></div>`).join(''):'<p class="muted">No records yet.</p>'}</div>`;
-}
-function dashboard(){
- const today=dateISO(), visits=state.visits.filter(v=>v.date===today),done=visits.filter(v=>v.status==='completed');
- return `<div class="grid g4"><div class="metric">Pilot Sales<b>3</b></div><div class="metric">Visits Today<b>${visits.length}</b></div><div class="metric">Completed<b>${done.length}</b></div><div class="metric">Need Review<b>${done.filter(v=>evidence(v).label!=='Reliable').length}</b></div></div>
- <div class="card"><h2>Today by Sales Representative</h2><table><thead><tr><th>Sales</th><th>Customers</th><th>Started</th><th>Completed</th><th>Reliable</th></tr></thead><tbody>${SALES.map(s=>{
- const mine=visits.filter(v=>v.salesId===s.id),comp=mine.filter(v=>v.status==='completed');
- return `<tr><td>${s.name}</td><td>${CUSTOMERS.filter(c=>c.salesId===s.id).length}</td><td>${mine.length}</td><td>${comp.length}</td><td>${comp.filter(v=>evidence(v).label==='Reliable').length}</td></tr>`}).join('')}</tbody></table></div>`;
-}
-function records(){
- const rows=[...state.visits].sort((a,b)=>(b.startTime||'').localeCompare(a.startTime||''));
- return `<div class="card"><h2>Visit Records</h2>${rows.length?`<table><thead><tr><th>Sales</th><th>Customer</th><th>Time</th><th>Duration</th><th>Evidence</th><th>Photo</th><th>Map</th></tr></thead><tbody>${rows.map(v=>{const ev=evidence(v);return `<tr><td>${salesById(v.salesId).name}</td><td>${esc(custById(v.customerId).name)}<br><span class="muted">${esc(v.result||'')}</span></td><td>${fmt(v.startTime)}<br>${fmt(v.endTime)}</td><td>${mins(v)} min</td><td><span class="badge ${ev.cls}">${ev.label}</span><br><small>${ev.issues.join(', ')}</small></td><td>${v.photo?`<img class="photo" src="${v.photo}">`:'-'}</td><td>${v.startGPS?`<a target="_blank" href="https://www.google.com/maps?q=${v.startGPS.lat},${v.startGPS.lng}">Open map</a><br><small>±${v.startGPS.accuracy}m</small>`:'-'}</td></tr>`}).join('')}</tbody></table>`:'<p class="muted">No records yet.</p>'}</div>`;
-}
-function pilotData(){
- return `<div class="card"><h2>Pilot Master Data</h2><p>3 sales representatives · 61 active customers</p><button class="btn secondary" onclick="exportData()">Export Pilot Records</button><button class="btn danger" style="margin-left:8px" onclick="resetPilot()">Reset Device Data</button><p class="muted" style="margin-top:12px">This device stores the current pilot records locally. Cloud synchronization is the next deployment step.</p></div>`;
-}
-function exportData(){const blob=new Blob([JSON.stringify({exportedAt:nowISO(),sales:SALES,customers:CUSTOMERS,state},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='SVT_Pilot_'+dateISO()+'.json';a.click();URL.revokeObjectURL(a.href)}
-function resetPilot(){if(confirm('Delete all visit records on this device?')){state=seed();save();render()}}
-initLogin();if(session){tab=session.role==='sales'?'customers':'dashboard';render()}
+function renderLogin(){const sales=employees.filter(x=>x.role==='sales'&&x.employment_status==='active');$('salesButtons').innerHTML=sales.map(s=>`<button class="btn secondary big" onclick="salesLogin('${s.id}')">${esc(s.full_name)}</button>`).join('')||'<div class="notice">No sales users found.</div>'}
+function salesLogin(id){session={role:'sales',userId:id};localStorage.setItem(SESSION_KEY,JSON.stringify(session));tab='customers';render()}
+function managerLogin(){const role=$('managerRole').value,pin=$('managerPin').value;if((role==='director'&&pin!=='2468')||(role==='boss'&&pin!=='1357'))return alert('Incorrect PIN');session={role,userId:role};localStorage.setItem(SESSION_KEY,JSON.stringify(session));tab='dashboard';render()}
+function logout(){localStorage.removeItem(SESSION_KEY);session=null;$('appView').classList.add('hidden');$('loginView').classList.remove('hidden');$('logoutBtn').classList.add('hidden')}
+function render(){if(!session)return;$('loginView').classList.add('hidden');$('appView').classList.remove('hidden');$('logoutBtn').classList.remove('hidden');const name=session.role==='sales'?employee(session.userId).full_name:(session.role==='boss'?'Boss':'Sales Director');$('welcome').textContent='Welcome, '+name;$('todayText').textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});$('roleBadge').textContent=session.role==='sales'?'Sales Representative':session.role==='boss'?'Boss':'Sales Director';const defs=session.role==='sales'?[['customers','My Customers'],['active','Active Visit'],['history','My History']]:[['dashboard','Today Dashboard'],['records','Visit Records']];$('tabs').innerHTML=defs.map(([id,label])=>`<button class="tab ${tab===id?'on':''}" onclick="tab='${id}';render()">${label}</button>`).join('');$('content').innerHTML=session.role==='sales'?(tab==='customers'?salesCustomers():tab==='active'?activeVisit():salesHistory()):(tab==='dashboard'?dashboard():records());}
+function myCustomers(){return customers.filter(c=>c.assigned_sales_id===session.userId&&c.customer_status==='active')}
+function activeForSales(){return visits.find(v=>v.sales_id===session.userId&&v.visit_status==='active')}
+function salesCustomers(){const active=activeForSales();return `<div class="card"><div class="row"><div><h2>My Customers</h2><p class="muted">${myCustomers().length} customers assigned</p></div><input style="max-width:300px" placeholder="Search customer" oninput="filterCustomers(this.value)"></div>${active?`<div class="notice">Active visit: <b>${esc(customer(active.customer_id).customer_name)}</b>. Finish it before starting another.</div>`:''}<div id="customerList">${customerCards(myCustomers(),active)}</div></div>`}
+function customerCards(list,active){return list.map(c=>`<div class="customer" data-search="${esc((c.customer_name+' '+c.address+' '+c.area).toLowerCase())}"><div class="row"><div><h3>${esc(c.customer_name)}</h3><div class="muted">${esc(c.address)}</div><div class="muted">${esc(c.mobile_number||'')}</div></div><button class="btn primary" ${active?'disabled':''} onclick="startVisit('${c.id}')">Start Visit</button></div></div>`).join('')}
+function filterCustomers(q){q=q.toLowerCase().trim();document.querySelectorAll('#customerList .customer').forEach(el=>el.classList.toggle('hidden',!el.dataset.search.includes(q)))}
+function getGPS(){return new Promise((resolve,reject)=>{if(!navigator.geolocation)return reject(new Error('GPS is not supported on this device.'));navigator.geolocation.getCurrentPosition(p=>resolve({lat:+p.coords.latitude.toFixed(6),lng:+p.coords.longitude.toFixed(6),accuracy:Math.round(p.coords.accuracy)}),()=>reject(new Error('GPS permission is required. Please enable Location and try again.')),{enableHighAccuracy:true,timeout:20000,maximumAge:0})})}
+async function startVisit(customerId){if(activeForSales())return alert('Finish the current visit first.');busy(true,'Getting GPS and starting visit…');try{const gps=await getGPS();const payload={sales_id:session.userId,customer_id:customerId,visit_status:'active',visit_date:dateISO(),start_time:new Date().toISOString(),start_latitude:gps.lat,start_longitude:gps.lng,start_accuracy_m:gps.accuracy,device_info:navigator.userAgent,evidence_status:'pending'};const {data,error}=await db.from('visits').insert(payload).select().single();if(error)throw error;visits.unshift(data);tab='active';render()}catch(e){showError(e)}finally{busy(false)}}
+function activeVisit(){const v=activeForSales();if(!v)return `<div class="card"><h2>No Active Visit</h2><p class="muted">Open My Customers and start a visit.</p></div>`;const c=customer(v.customer_id);return `<div class="card"><h2>${esc(c.customer_name)}</h2><p class="muted">${esc(c.address)}</p><span class="badge active">Started ${fmt(v.start_time)}</span><label>Take a live site photo</label><input type="file" accept="image/*" capture="environment" onchange="selectPhoto(event)"><div id="preview"></div><label>Visit result</label><select id="result"><option value="">Select result</option><option>Order Taken</option><option>No Order</option><option>Need Follow-up</option><option>Customer Closed</option><option>Payment Collected</option></select><label>Remark</label><textarea id="remark" placeholder="Customer feedback or next action"></textarea><button class="btn primary big" style="margin-top:14px" onclick="finishVisit('${v.id}')">Finish Visit</button></div>`}
+function selectPhoto(e){photoFile=e.target.files[0]||null;if(!photoFile)return;if(photoFile.size>8*1024*1024){photoFile=null;e.target.value='';return alert('Photo is larger than 8MB. Please retake it.')}const url=URL.createObjectURL(photoFile);$('preview').innerHTML=`<img class="photo" style="margin-top:10px" src="${url}">`}
+async function finishVisit(id){if(!photoFile)return alert('Please take a live site photo.');const result=$('result').value;if(!result)return alert('Please select a visit result.');busy(true,'Uploading photo and finishing visit…');try{const gps=await getGPS();const ext=(photoFile.name.split('.').pop()||'jpg').replace(/[^a-z0-9]/gi,'').toLowerCase();const path=`${session.userId}/${id}-${Date.now()}.${ext}`;const up=await db.storage.from('visit-photos').upload(path,photoFile,{upsert:false,contentType:photoFile.type||'image/jpeg'});if(up.error)throw up.error;const patch={visit_status:'completed',end_time:new Date().toISOString(),end_latitude:gps.lat,end_longitude:gps.lng,end_accuracy_m:gps.accuracy,visit_result:result,remark:$('remark').value.trim(),photo_path:path,evidence_status:'pending'};const {data,error}=await db.from('visits').update(patch).eq('id',id).select().single();if(error)throw error;visits=visits.map(v=>v.id===id?data:v);photoFile=null;tab='history';render()}catch(e){showError(e)}finally{busy(false)}}
+function evidence(v){let score=0,issues=[];if(v.start_latitude!=null)score++;else issues.push('No start GPS');if(v.end_latitude!=null)score++;else issues.push('No end GPS');if(v.photo_path)score++;else issues.push('No photo');if(mins(v)>=2)score++;else issues.push('Very short');if((v.start_accuracy_m||999)<=100)score++;else issues.push('Low GPS accuracy');return{label:score>=5?'Reliable':score>=3?'Review':'Insufficient',cls:score>=5?'ok':score>=3?'warn':'bad',issues}}
+function salesHistory(){const rows=visits.filter(v=>v.sales_id===session.userId);return `<div class="card"><h2>My Visit History</h2>${rows.length?rows.map(v=>`<div class="customer"><b>${esc(customer(v.customer_id).customer_name)}</b><div class="muted">${fmt(v.start_time)} · ${v.visit_status}${v.visit_status==='completed'?' · '+mins(v)+' min':''}</div></div>`).join(''):'<p class="muted">No records yet.</p>'}</div>`}
+function dashboard(){const today=dateISO(),todayVisits=visits.filter(v=>v.visit_date===today),done=todayVisits.filter(v=>v.visit_status==='completed'),sales=employees.filter(e=>e.role==='sales');return `<div class="grid g4"><div class="metric">Pilot Sales<b>${sales.length}</b></div><div class="metric">Visits Today<b>${todayVisits.length}</b></div><div class="metric">Completed<b>${done.length}</b></div><div class="metric">Need Review<b>${done.filter(v=>evidence(v).label!=='Reliable').length}</b></div></div><div class="card"><div class="row"><h2>Today by Sales Representative</h2><button class="btn secondary" onclick="refreshCloud()">Refresh</button></div><table><thead><tr><th>Sales</th><th>Customers</th><th>Started</th><th>Completed</th><th>Reliable</th></tr></thead><tbody>${sales.map(s=>{const mine=todayVisits.filter(v=>v.sales_id===s.id),comp=mine.filter(v=>v.visit_status==='completed');return `<tr><td>${esc(s.full_name)}</td><td>${customers.filter(c=>c.assigned_sales_id===s.id).length}</td><td>${mine.length}</td><td>${comp.length}</td><td>${comp.filter(v=>evidence(v).label==='Reliable').length}</td></tr>`}).join('')}</tbody></table></div>`}
+async function photoUrl(path){const {data,error}=await db.storage.from('visit-photos').createSignedUrl(path,3600);if(error)throw error;return data.signedUrl}
+function records(){const rows=visits;return `<div class="card"><div class="row"><h2>Visit Records</h2><button class="btn secondary" onclick="refreshCloud()">Refresh</button></div>${rows.length?`<table><thead><tr><th>Sales</th><th>Customer</th><th>Time</th><th>Duration</th><th>Evidence</th><th>Photo</th><th>Map</th></tr></thead><tbody>${rows.map(v=>{const ev=evidence(v);return `<tr><td>${esc(employee(v.sales_id).full_name)}</td><td>${esc(customer(v.customer_id).customer_name)}<br><span class="muted">${esc(v.visit_result||'')}</span></td><td>${fmt(v.start_time)}<br>${fmt(v.end_time)}</td><td>${mins(v)} min</td><td><span class="badge ${ev.cls}">${ev.label}</span><br><small>${esc(ev.issues.join(', '))}</small></td><td>${v.photo_path?`<button class="btn secondary" onclick="openPhoto('${esc(v.photo_path)}')">View</button>`:'-'}</td><td>${v.start_latitude!=null?`<a target="_blank" href="https://www.google.com/maps?q=${v.start_latitude},${v.start_longitude}">Open map</a><br><small>±${v.start_accuracy_m||'-'}m</small>`:'-'}</td></tr>`}).join('')}</tbody></table>`:'<p class="muted">No records yet.</p>'}</div>`}
+async function openPhoto(path){busy(true,'Opening photo…');try{window.open(await photoUrl(path),'_blank')}catch(e){showError(e)}finally{busy(false)}}
+async function refreshCloud(){busy(true,'Refreshing cloud data…');try{const {data,error}=await db.from('visits').select('*').order('start_time',{ascending:false});if(error)throw error;visits=data||[];render()}catch(e){showError(e)}finally{busy(false)}}
+db.channel('visit-changes').on('postgres_changes',{event:'*',schema:'public',table:'visits'},()=>{if(session&&session.role!=='sales')refreshCloud()}).subscribe();
+loadCloud();
 </script>
 </body>
 </html>

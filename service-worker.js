@@ -1,4 +1,4 @@
-const CACHE='svt-offline-v1';
+const CACHE='svt-offline-v2';
 const APP=['./v2.html','./supabase.min.js','./manifest.webmanifest','./icon.svg'];
 
 self.addEventListener('install',event=>{

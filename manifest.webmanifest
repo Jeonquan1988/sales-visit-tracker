@@ -1,0 +1,13 @@
+{
+  "name": "Sales Visit Tracker",
+  "short_name": "Sales Tracker",
+  "start_url": "./v2.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f4f6fa",
+  "theme_color": "#0b57d0",
+  "description": "Mobile sales visit recording with offline support",
+  "icons": [
+    {"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
+  ]
+}
